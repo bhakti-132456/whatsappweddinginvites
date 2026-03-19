@@ -1,15 +1,27 @@
 "use client";
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, PerspectiveCamera, RoundedBox, useTexture } from '@react-three/drei';
+import { Float, PerspectiveCamera, RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
 
 const IPhoneModel = ({ inviteTextureUrl }: { inviteTextureUrl: string }) => {
   const meshRef = useRef<THREE.Group>(null!);
-  
-  // Load the user's invitation as a dynamic texture
-  const texture = useTexture(inviteTextureUrl);
+  const [texture, setTexture] = useState<THREE.Texture | null>(null);
+
+  useEffect(() => {
+    const loader = new THREE.TextureLoader();
+    loader.load(
+      inviteTextureUrl,
+      (tex) => {
+        setTexture(tex);
+      },
+      undefined,
+      (err) => {
+        console.error("Failed to load phone texture:", err);
+      }
+    );
+  }, [inviteTextureUrl]);
 
   useFrame((state) => {
     if (meshRef.current) {
@@ -38,7 +50,7 @@ const IPhoneModel = ({ inviteTextureUrl }: { inviteTextureUrl: string }) => {
         {/* The Screen (The Invite) */}
         <mesh position={[0, 0, 0.21]}>
           <planeGeometry args={[3.2, 6.7]} />
-          <meshBasicMaterial map={texture} />
+          <meshBasicMaterial map={texture} color={texture ? "white" : "#05241e"} />
         </mesh>
         
         {/* Glossy Screen Overlay for Realism */}
@@ -58,6 +70,14 @@ const IPhoneModel = ({ inviteTextureUrl }: { inviteTextureUrl: string }) => {
 };
 
 export default function PhonePreview({ textureUrl = "/preview-invite.jpg" }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return <div className="h-[700px] w-full bg-onyx flex items-center justify-center text-pearl/20 body-mono">Initializing Hardware...</div>;
+
   return (
     <div className="h-[700px] w-full cursor-grab active:cursor-grabbing">
       <Canvas shadows>

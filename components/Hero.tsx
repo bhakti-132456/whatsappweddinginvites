@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { PerspectiveCamera, Float, useTexture, Center } from "@react-three/drei";
 import { gsap } from "gsap";
@@ -9,15 +9,19 @@ import * as THREE from "three";
 
 function UnfoldingInvite({ scrollProgress }: { scrollProgress: { value: number } }) {
   const meshRef = useRef<THREE.Mesh>(null!);
-  const texture = useTexture("/preview-invite.jpg"); // Fallback or placeholder
+  const [texture, setTexture] = useState<THREE.Texture | null>(null);
 
-  // Simple unfolding logic via vertex displacement or rotation of planes
-  // For V2, we'll use a shader or a multi-part mesh. 
-  // Let's start with a double-sided plane that "unfolds" on the Y axis.
+  useEffect(() => {
+    new THREE.TextureLoader().load(
+      "/preview-invite.jpg",
+      (tex) => setTexture(tex),
+      undefined,
+      () => console.warn("Failed to load hero texture, using fallback.")
+    );
+  }, []);
 
   useFrame(() => {
     if (meshRef.current) {
-      // Mapping scroll 0-1 to rotation 0 to PI
       const targetRotation = (1 - scrollProgress.value) * Math.PI;
       meshRef.current.rotation.x = THREE.MathUtils.lerp(
         meshRef.current.rotation.x,
@@ -32,7 +36,7 @@ function UnfoldingInvite({ scrollProgress }: { scrollProgress: { value: number }
       {/* Bottom Leaf */}
       <mesh position={[0, -1.5, 0]}>
         <planeGeometry args={[4, 3]} />
-        <meshPhysicalMaterial map={texture} side={THREE.DoubleSide} />
+        <meshPhysicalMaterial map={texture} side={THREE.DoubleSide} color={texture ? "white" : "#1a1a1a"} />
       </mesh>
       
       {/* Top Leaf (Unfolding) */}
@@ -40,7 +44,7 @@ function UnfoldingInvite({ scrollProgress }: { scrollProgress: { value: number }
          <group position={[0, 1.5, 0]}>
             <mesh position={[0, 0, 0]}>
                 <planeGeometry args={[4, 3]} />
-                <meshPhysicalMaterial map={texture} side={THREE.DoubleSide} />
+                <meshPhysicalMaterial map={texture} side={THREE.DoubleSide} color={texture ? "white" : "#1a1a1a"} />
             </mesh>
          </group>
       </mesh>
@@ -49,10 +53,12 @@ function UnfoldingInvite({ scrollProgress }: { scrollProgress: { value: number }
 }
 
 export function Hero() {
+  const [mounted, setMounted] = useState(false);
   const scrollProgress = useRef({ value: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setMounted(true);
     gsap.registerPlugin(ScrollTrigger);
 
     const tl = gsap.to(scrollProgress.current, {
@@ -79,6 +85,8 @@ export function Hero() {
       tl.kill();
     };
   }, []);
+
+  if (!mounted) return <section className="h-screen bg-onyx" />;
 
   return (
     <section ref={containerRef} className="relative h-[200vh] bg-onyx">
