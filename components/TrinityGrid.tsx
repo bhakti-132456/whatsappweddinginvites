@@ -2,146 +2,136 @@
 
 import { motion } from "framer-motion";
 
+const stats = [
+  { label: "Love Stories Told", value: "500+" },
+  { label: "Masterpiece Delivery", value: "24-Hour" },
+  { label: "Bespoke Craftsmanship", value: "100%" },
+];
+
 const services = [
   {
-    title: "Image Invite",
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-      </svg>
-    ),
-    description: "Stunning, high-resolution digital cards designed to captivate. Perfect for quick distribution across WhatsApp groups.",
-    price: "Starting ₹500",
-    features: ["HD Resolution", "Custom Design", "WhatsApp Optimized", "Unlimited Shares"],
-    gradient: "from-gold/20 to-jewel-ruby/10",
+    id: "01",
+    title: "Static Elegance",
+    type: "Image",
+    copy: "High-fidelity digital cards designed with editorial precision. Perfect for instant, effortless sharing.",
+    specs: "4K Resolution • Custom Typography • WhatsApp Optimized",
+    price: "₹500",
+    className: "lg:col-span-2 lg:row-span-1",
+    bg: "bg-onyx-light",
   },
   {
-    title: "Video Invite",
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
-      </svg>
-    ),
-    description: "Cinematic motion-designed invitations with music, animations, and your story. The ultimate luxury e-invite.",
-    price: "Starting ₹1,500",
-    features: ["4K Video", "Background Music", "Story Animation", "Shareable Link"],
-    popular: true,
-    gradient: "from-gold/20 to-jewel-emerald/10",
+    id: "02",
+    title: "Cinematic Motion",
+    type: "Video",
+    copy: "A sensory journey. We combine fluid animation, curated soundscapes, and your personal imagery into a 30-second masterpiece.",
+    specs: "Studio Grade Audio • Parallax Visuals • Story-driven Narrative",
+    price: "₹1,500",
+    className: "lg:col-span-1 lg:row-span-2",
+    bg: "bg-onyx-light",
+    isPopular: true,
   },
   {
-    title: "PDF Invite",
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-      </svg>
-    ),
-    description: "Elegant multi-page digital booklets with ceremony details, maps, RSVP, and more — all in one sharable document.",
-    price: "Starting ₹1,500",
-    features: ["Multi-Page", "Interactive Maps", "RSVP Section", "Print Ready"],
-    gradient: "from-gold/20 to-gold-dark/10",
+    id: "03",
+    title: "Interactive Folio",
+    type: "PDF",
+    copy: "The complete concierge. A multi-page interactive document featuring live maps, RSVP integration, and your full itinerary.",
+    specs: "Dynamic RSVP • Live Map Links • Multi-device Compatibility",
+    price: "₹1,500",
+    className: "lg:col-span-2 lg:row-span-1",
+    bg: "bg-onyx-light",
   },
 ];
 
 export function TrinityGrid() {
   return (
-    <section id="services" className="relative section-padding">
+    <section id="services" className="relative section-padding bg-onyx">
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16 md:mb-24"
-        >
-          <p className="text-gold text-sm font-semibold tracking-[0.2em] uppercase mb-4">
-            Our Services
-          </p>
-          <h2 className="heading-lg mb-4">
-            Three Ways to Say{" "}
-            <span className="text-gold-gradient italic">&ldquo;I Do&rdquo;</span>
-          </h2>
-          <p className="text-offwhite/50 max-w-2xl mx-auto">
-            Choose the format that matches your celebration. Every invite is
-            hand-crafted by our expert designers.
-          </p>
-        </motion.div>
+        {/* Stats / Numbers Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-32 border-b border-pearl/10 pb-20">
+          {stats.map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="flex flex-col items-center md:items-start"
+            >
+              <span className="text-champagne font-serif italic text-sm mb-2">0{i + 1}</span>
+              <span className="heading-md md:text-4xl text-pearl mb-1">{stat.value}</span>
+              <span className="text-pearl/40 text-xs tracking-widest uppercase">{stat.label}</span>
+            </motion.div>
+          ))}
+        </div>
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        {/* Section Header */}
+        <div className="mb-20">
+          <motion.p
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="text-champagne text-xs font-semibold tracking-widest uppercase mb-4"
+          >
+            Collections
+          </motion.p>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="heading-lg"
+          >
+            Select Your Medium
+          </motion.h2>
+        </div>
+
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 auto-rows-[300px]">
           {services.map((service, i) => (
             <motion.div
-              key={service.title}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: i * 0.15 }}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className="group relative"
+              key={service.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: i * 0.1 }}
+              className={`group relative overflow-hidden p-8 flex flex-col justify-between border border-pearl/5 ${service.className} ${service.bg} rounded-[40px] hover:border-champagne/20 transition-colors duration-500`}
               data-cursor="premium"
             >
-              {/* Popular badge */}
-              {service.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 clay px-4 py-1 text-charcoal text-xs font-bold tracking-wider uppercase">
-                  Most Popular
-                </div>
-              )}
-
-              <div
-                className={`glass h-full p-8 transition-all duration-500 group-hover:border-gold/30 relative overflow-hidden ${
-                  service.popular ? "border-gold/20" : ""
-                }`}
-              >
-                {/* Background gradient */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
-                />
-
-                <div className="relative z-10">
-                  {/* Icon */}
-                  <div className="w-14 h-14 rounded-2xl glass flex items-center justify-center text-gold mb-6 group-hover:shadow-[0_0_20px_rgba(201,169,110,0.3)] transition-shadow duration-500">
-                    {service.icon}
-                  </div>
-
-                  {/* Title & Description */}
-                  <h3 className="heading-md text-xl mb-3">{service.title}</h3>
-                  <p className="text-offwhite/50 text-sm leading-relaxed mb-6">
-                    {service.description}
-                  </p>
-
-                  {/* Features */}
-                  <ul className="space-y-2 mb-8">
-                    {service.features.map((feature) => (
-                      <li
-                        key={feature}
-                        className="flex items-center gap-2 text-sm text-offwhite/60"
-                      >
-                        <svg className="w-4 h-4 text-gold flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Price & CTA */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-gold font-serif text-xl font-semibold">
-                      {service.price}
+              <div className="relative z-10">
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <span className="text-champagne text-xs font-medium tracking-widest uppercase block mb-1">
+                      {service.type}
                     </span>
-                    <a
-                      href="https://wa.me/919999999999"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="clay px-5 py-2 text-charcoal text-sm font-semibold"
-                      data-cursor="cta"
-                    >
-                      Get Started
-                    </a>
+                    <h3 className="heading-md text-2xl text-pearl">{service.title}</h3>
                   </div>
+                  {service.isPopular && (
+                    <span className="px-3 py-1 bg-champagne text-onyx text-[10px] font-bold tracking-tighter rounded-full uppercase">
+                      Most Bespoke
+                    </span>
+                  )}
+                </div>
+                <p className="text-pearl/50 text-base max-w-sm mb-6 leading-relaxed">
+                  {service.copy}
+                </p>
+                <div className="text-pearl/30 text-[10px] tracking-wider uppercase font-medium">
+                  {service.specs}
                 </div>
               </div>
+
+              <div className="relative z-10 flex items-end justify-between mt-8">
+                <span className="heading-md text-3xl text-champagne">{service.price}</span>
+                <button className="btn-premium-outline !py-2 !px-6 text-[10px] magnetic-target" data-cursor="cta">
+                  Explore
+                </button>
+              </div>
+
+              {/* Decorative elements */}
+              <div className="absolute top-0 right-0 p-8 text-pearl/5 font-serif italic text-8xl pointer-events-none group-hover:text-champagne/5 transition-colors duration-500">
+                {service.id}
+              </div>
+              
+              {/* Organic border decoration */}
+              <div className="absolute inset-0 border-[20px] border-onyx opacity-10 pointer-events-none" />
             </motion.div>
           ))}
         </div>

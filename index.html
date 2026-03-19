@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp Wedding Invites — Tradition, Digitized.</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09040a;--surf1:#130a10;--surf2:#1e0f18;--surf3:#2a1622;
+  --gold:#c8903a;--gold2:#e5ba78;--gold3:rgba(200,144,58,.12);
+  --crimson:#6e1225;--crimson2:#9c1e35;
+  --ivory:#f2e8de;--ivory2:rgba(242,232,222,.55);--ivory3:rgba(242,232,222,.18);
+  --muted:#7a6058;--bdr:rgba(200,144,58,.16);--bdr2:rgba(200,144,58,.38);
+  --ease:cubic-bezier(.25,.46,.45,.94);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ivory);font-family:'DM Sans',sans-serif;font-weight:300;overflow-x:hidden;cursor:none;}
+::selection{background:var(--crimson);color:var(--ivory);}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.028'/%3E%3C/svg%3E");pointer-events:none;z-index:9990;opacity:.5;}
+
+/* CURSOR */
+#cur,#cur-r{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s;}
+#cur{width:7px;height:7px;background:var(--gold);}
+#cur-r{width:28px;height:28px;border:1px solid rgba(200,144,58,.45);background:transparent;}
+body.hov #cur{width:14px;height:14px;background:var(--gold2);}
+body.hov #cur-r{width:44px;height:44px;border-color:var(--gold2);}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:22px 52px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(9,4,10,.92) 0%,transparent);backdrop-filter:blur(12px);}
+.nl{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;letter-spacing:.06em;color:var(--gold2);text-decoration:none;}
+.nl sub{font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-style:normal;vertical-align:middle;margin-left:6px;}
+.nv{display:flex;gap:40px;list-style:none;}
+.nv a{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ivory2);text-decoration:none;transition:color .2s;}
+.nv a:hover{color:var(--gold2);}
+.nc{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--bdr2);padding:10px 22px;border-radius:1px;text-decoration:none;transition:background .2s,color .2s;cursor:none;}
+.nc:hover{background:var(--gold);color:var(--bg);}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;padding:110px 48px 80px;}
+.hbg{position:absolute;inset:0;background:radial-gradient(ellipse 90% 65% at 50% 45%,rgba(110,18,37,.42) 0%,transparent 65%),radial-gradient(ellipse 50% 50% at 82% 85%,rgba(200,144,58,.07) 0%,transparent 55%),var(--bg);}
+.mandala{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(700px,90vw);height:min(700px,90vw);pointer-events:none;opacity:.05;animation:mspin 90s linear infinite;}
+@keyframes mspin{to{transform:translate(-50%,-50%) rotate(360deg);}}
+.petal{position:absolute;pointer-events:none;border-radius:50% 0 50% 0;opacity:0;animation:pfloat var(--pd,12s) ease-in-out var(--pdl,0s) infinite;}
+@keyframes pfloat{0%{opacity:0;transform:translateY(-30px) rotate(0) scale(.6);}18%{opacity:var(--pop,.4);}82%{opacity:var(--pop,.4);}100%{opacity:0;transform:translateY(200px) rotate(180deg) scale(.25);}}
+.hc{position:relative;z-index:2;max-width:940px;}
+.hk{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:32px;display:flex;align-items:center;justify-content:center;gap:20px;}
+.hk::before,.hk::after{content:'';width:56px;height:1px;background:var(--gold);}
+.hh{font-family:'Cormorant Garamond',serif;font-size:clamp(50px,9.5vw,114px);font-weight:300;line-height:.95;letter-spacing:-.015em;color:var(--ivory);}
+.hh em{color:var(--gold2);font-style:italic;display:block;}
+.hh span{display:block;font-size:clamp(24px,4.5vw,58px);color:var(--ivory2);font-weight:300;margin-top:14px;}
+.hs{font-size:clamp(13px,1.6vw,17px);color:var(--ivory2);line-height:1.75;max-width:520px;margin:32px auto 52px;}
+.hbtns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.bg{background:var(--gold);color:var(--bg);padding:15px 40px;border-radius:1px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;font-weight:500;transition:background .2s,transform .15s;cursor:none;border:none;display:inline-block;}
+.bg:hover{background:var(--gold2);transform:translateY(-2px);}
+.bo{background:transparent;color:var(--ivory);padding:15px 40px;border-radius:1px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;border:1px solid var(--ivory3);transition:border-color .2s,color .2s;cursor:none;display:inline-block;}
+.bo:hover{border-color:var(--gold2);color:var(--gold2);}
+.hstats{display:flex;justify-content:center;gap:72px;margin-top:80px;padding-top:52px;border-top:1px solid var(--bdr);}
+.sn{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:300;color:var(--gold2);line-height:1;}
+.sl{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+
+/* SECTION COMMON */
+.se{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+.sh{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,5vw,62px);font-weight:300;line-height:1.05;color:var(--ivory);}
+.sh em{color:var(--gold2);font-style:italic;}
+.sd{color:var(--ivory2);font-size:14px;line-height:1.75;max-width:520px;margin-top:14px;}
+
+/* FORMATS */
+.formats{padding:100px 52px;background:var(--surf1);}
+.fmts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:60px;border:1px solid var(--bdr);}
+.fc{background:var(--surf2);padding:56px 44px 48px;position:relative;overflow:hidden;transition:background .35s;}
+.fc:hover{background:var(--surf3);}
+.fc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease);}
+.fc:hover::after{transform:scaleX(1);}
+.fn{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:.3em;color:var(--muted);margin-bottom:24px;}
+.ft{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--ivory);line-height:1;}
+.fp{font-size:13px;color:var(--gold);margin-top:8px;letter-spacing:.06em;}
+.fdiv{width:32px;height:1px;background:var(--bdr2);margin:24px 0;}
+.ff{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.ff li{font-size:13px;color:var(--ivory2);display:flex;gap:10px;align-items:flex-start;}
+.ff li::before{content:'✦';color:var(--gold);font-size:7px;margin-top:4px;flex-shrink:0;}
+.fbadge{position:absolute;top:20px;right:20px;background:var(--gold);color:var(--bg);font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;}
+
+/* GALLERY */
+.gallery{padding:100px 52px;}
+.gw{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:60px;border:1px solid var(--bdr);}
+.gc{aspect-ratio:9/16;position:relative;overflow:hidden;cursor:none;}
+.gci{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 28px;text-align:center;transition:transform .6s var(--ease);}
+.gc:hover .gci{transform:scale(1.04);}
+.go{position:absolute;inset:0;z-index:3;background:rgba(9,4,10,.8);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;}
+.gc:hover .go{opacity:1;}
+.go span{border:1px solid var(--gold);color:var(--gold2);padding:10px 22px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;}
+.gc1 .gci{background:linear-gradient(140deg,#180410 0%,#3a0c1b 100%);}
+.gc2 .gci{background:linear-gradient(140deg,#071014 0%,#0c2829 100%);}
+.gc3 .gci{background:linear-gradient(140deg,#28180a 0%,#472c0e 100%);}
+.gframe{position:absolute;inset:14px;border:1px solid var(--bdr2);pointer-events:none;}
+.in{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--gold2);line-height:1.15;margin-bottom:8px;}
+.il{width:52px;height:1px;background:var(--bdr2);margin:14px auto;}
+.id{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ivory2);}
+.gtag{position:absolute;top:18px;right:18px;z-index:4;background:var(--gold);color:var(--bg);font-size:8px;letter-spacing:.18em;text-transform:uppercase;padding:4px 10px;}
+
+/* PRICING */
+.pricing{padding:100px 52px;background:var(--surf1);}
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:60px;border:1px solid var(--bdr);}
+.pc{background:var(--surf2);padding:52px 40px;position:relative;transition:background .3s;}
+.pc:hover{background:var(--surf3);}
+.pc.hot{background:var(--surf3);}
+.pc.hot::before{content:'Most Popular';position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--bg);font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:5px 20px;}
+.pt{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+.pn{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--ivory);margin-bottom:6px;}
+.pp{font-family:'Cormorant Garamond',serif;font-size:54px;font-weight:300;color:var(--gold2);line-height:1;}
+.pp sup{font-size:22px;vertical-align:super;}
+.pper{font-size:12px;color:var(--muted);margin-top:4px;}
+.pdiv{height:1px;background:var(--bdr);margin:28px 0;}
+.pf{list-style:none;display:flex;flex-direction:column;gap:11px;}
+.pf li{font-size:13px;color:var(--ivory2);display:flex;gap:10px;align-items:flex-start;}
+.pf li::before{content:'✦';color:var(--gold);font-size:7px;margin-top:4px;flex-shrink:0;}
+.pbtn{display:block;text-align:center;margin-top:36px;padding:13px;border:1px solid var(--bdr2);color:var(--gold2);text-decoration:none;font-size:11px;letter-spacing:.12em;text-transform:uppercase;transition:background .2s,color .2s,border-color .2s;cursor:none;}
+.pbtn:hover,.pc.hot .pbtn{background:var(--gold);color:var(--bg);border-color:var(--gold);}
+
+/* ══ SEAL SECTION ══ */
+.ss{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:100px 40px 120px;}
+.sbg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 50% 50%,rgba(110,18,37,.25) 0%,transparent 70%),var(--surf1);}
+
+/* keywords */
+.kw{position:absolute;font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(200,144,58,.2);font-size:clamp(13px,1.4vw,17px);letter-spacing:.04em;pointer-events:none;white-space:nowrap;animation:kfloat var(--kd,9s) ease-in-out var(--kdl,0s) infinite;}
+@keyframes kfloat{0%,100%{transform:translate(0,0) rotate(var(--kr,0deg));}33%{transform:translate(var(--kx,8px),var(--ky,-12px)) rotate(var(--kr2,2deg));}66%{transform:translate(calc(var(--kx,8px)*-.5),var(--ky2,7px)) rotate(calc(var(--kr,-2deg)*-.4));}}
+
+.shead{text-align:center;margin-bottom:60px;position:relative;z-index:2;}
+
+/* Envelope */
+.env{position:relative;z-index:2;width:min(640px,92vw);}
+
+/* Flap */
+.fwrap{position:relative;width:100%;perspective:900px;perspective-origin:50% 0%;margin-bottom:-1px;z-index:10;}
+.flap{width:100%;background:var(--surf3);border:1px solid var(--bdr);border-bottom:none;border-radius:2px 2px 0 0;transform-origin:top center;transform-style:preserve-3d;transition:transform 1.4s cubic-bezier(.4,0,.2,1);position:relative;cursor:none;user-select:none;}
+.flap-f{padding:36px 48px 28px;display:flex;flex-direction:column;align-items:center;backface-visibility:hidden;}
+.flap-b{position:absolute;inset:0;background:var(--surf2);backface-visibility:hidden;transform:rotateX(180deg);border-radius:2px 2px 0 0;}
+.flap.open{transform:rotateX(-180deg);}
+
+/* Wax seal */
+.seal{width:88px;height:88px;background:radial-gradient(circle at 38% 35%,var(--crimson2) 0%,var(--crimson) 58%,#3d0a15 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 0 3px rgba(200,144,58,.5),0 0 0 7px rgba(200,144,58,.1),0 10px 36px rgba(0,0,0,.65);transition:transform .3s var(--ease),box-shadow .3s;margin-bottom:14px;}
+.flap:not(.open):hover .seal{transform:scale(1.07);box-shadow:0 0 0 4px rgba(200,144,58,.85),0 0 0 9px rgba(200,144,58,.18),0 14px 44px rgba(0,0,0,.7);}
+.seal-ring{position:absolute;inset:6px;border-radius:50%;border:1px solid rgba(200,144,58,.4);}
+.seal-mono{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;color:var(--gold2);letter-spacing:.1em;position:relative;z-index:2;}
+.seal-cracks{position:absolute;inset:0;pointer-events:none;}
+.cl{stroke:rgba(245,220,165,.0);stroke-width:1.2;fill:none;stroke-dasharray:44;stroke-dashoffset:44;transition:stroke .1s,stroke-dashoffset .55s var(--ease);}
+.seal.crack .cl{stroke:rgba(245,220,165,.75);stroke-dashoffset:0;}
+
+.hint{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);transition:opacity .5s;}
+.flap.open .hint{opacity:0;}
+.arr{display:inline-flex;flex-direction:column;align-items:center;gap:4px;margin-top:12px;opacity:.45;animation:abounce 2.2s ease-in-out infinite;}
+@keyframes abounce{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+
+/* Envelope body */
+.envbody{background:var(--surf2);border:1px solid var(--bdr);border-radius:0 0 2px 2px;min-height:300px;position:relative;overflow:hidden;}
+.envcon{padding:0 40px 44px;opacity:0;transform:translateY(20px);transition:opacity .8s .25s,transform .8s .25s var(--ease);pointer-events:none;}
+.env.opened .envcon{opacity:1;transform:none;pointer-events:all;}
+
+/* Progress */
+.prog{display:flex;gap:6px;padding-top:36px;margin-bottom:28px;}
+.ps{flex:1;height:2px;background:var(--bdr);border-radius:1px;transition:background .4s;}
+.ps.done{background:var(--gold);}
+.ps.act{background:var(--gold2);}
+
+/* Team message */
+.tmsg{display:flex;gap:10px;margin-bottom:22px;animation:bin .4s ease both;}
+@keyframes bin{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.tav{width:30px;height:30px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;color:var(--bg);flex-shrink:0;margin-top:2px;}
+.tbbl{background:var(--surf3);border:1px solid var(--bdr);border-radius:2px 10px 10px 10px;padding:12px 16px;font-size:13px;line-height:1.65;color:var(--ivory);max-width:100%;}
+.tbbl strong{color:var(--gold2);font-weight:500;}
+
+/* Steps */
+.step{display:none;}
+.step.on{display:block;}
+
+/* Package buttons */
+.pkgs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;}
+.pkg{background:var(--surf1);border:1px solid var(--bdr);border-radius:2px;padding:18px 14px;cursor:none;text-align:center;transition:border-color .2s,background .2s;}
+.pkg:hover{border-color:var(--gold);background:var(--surf2);}
+.pkg.sel{border-color:var(--gold);background:var(--gold3);}
+.pkgn{font-family:'Cormorant Garamond',serif;font-size:21px;color:var(--gold2);}
+.pkgp{font-size:11px;color:var(--muted);margin-top:4px;}
+.pkgd{font-size:11px;color:var(--ivory2);margin-top:8px;line-height:1.4;}
+
+/* Fields */
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+.fr.one{grid-template-columns:1fr;}
+.fg{display:flex;flex-direction:column;gap:6px;}
+.fl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);}
+.fi{background:var(--surf1);border:1px solid var(--bdr);color:var(--ivory);padding:11px 13px;border-radius:1px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .2s;width:100%;}
+.fi:focus{border-color:var(--gold2);}
+.fi::placeholder{color:var(--muted);}
+textarea.fi{resize:vertical;min-height:96px;line-height:1.6;}
+
+/* Ref links */
+.rlr{display:flex;gap:8px;margin-bottom:8px;}
+.rli{flex:1;background:var(--surf1);border:1px solid var(--bdr);color:var(--ivory);padding:9px 12px;border-radius:1px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none;transition:border-color .2s;}
+.rli:focus{border-color:var(--gold2);}
+.rli::placeholder{color:var(--muted);}
+.rladd{background:transparent;border:1px solid var(--bdr);color:var(--gold);padding:9px 15px;border-radius:1px;font-size:18px;line-height:1;cursor:none;transition:background .2s;}
+.rladd:hover{background:var(--gold3);}
+
+/* Upload */
+.upz{margin-top:14px;border:1px dashed var(--bdr2);border-radius:2px;padding:32px;text-align:center;cursor:none;transition:border-color .2s,background .2s;position:relative;}
+.upz:hover,.upz.dov{border-color:var(--gold);background:var(--gold3);}
+.upz input{position:absolute;inset:0;opacity:0;cursor:none;width:100%;}
+.upi{font-size:26px;margin-bottom:10px;color:var(--gold);}
+.upt{font-size:12px;color:var(--ivory2);line-height:1.6;}
+.upt span{color:var(--gold2);}
+.flist{margin-top:12px;display:flex;flex-direction:column;gap:7px;}
+.frow{background:var(--surf1);border:1px solid var(--bdr);padding:9px 13px;border-radius:1px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--ivory2);}
+.fico{color:var(--gold);font-size:14px;flex-shrink:0;}
+.fnm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.frm{color:var(--muted);cursor:none;font-size:16px;transition:color .2s;background:none;border:none;}
+.frm:hover{color:#e87070;}
+
+/* Step nav */
+.snav{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;padding-top:18px;border-top:1px solid var(--bdr);}
+.sbt{background:transparent;border:1px solid var(--bdr2);color:var(--gold2);padding:11px 26px;border-radius:1px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;cursor:none;transition:background .2s;font-family:'DM Sans',sans-serif;}
+.sbt:hover{background:var(--gold3);}
+.sbt.p{background:var(--gold);color:var(--bg);border-color:var(--gold);}
+.sbt.p:hover{background:var(--gold2);}
+.sbt:disabled{opacity:.3;pointer-events:none;}
+
+/* Summary */
+.smry{background:var(--surf1);border:1px solid var(--bdr);border-radius:2px;padding:22px;font-size:13px;line-height:2;color:var(--ivory2);margin-bottom:22px;}
+.smry strong{color:var(--gold2);font-weight:500;}
+.wabtn{display:flex;align-items:center;justify-content:center;gap:10px;background:#25D366;color:#fff;padding:15px 32px;border-radius:1px;font-size:13px;letter-spacing:.08em;text-decoration:none;cursor:none;transition:background .2s;}
+.wabtn:hover{background:#1ebe5a;}
+.wabtn svg{width:19px;height:19px;fill:#fff;flex-shrink:0;}
+
+/* HOW */
+.how{padding:100px 52px;}
+.hw{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:60px;border:1px solid var(--bdr);}
+.hcard{background:var(--surf2);padding:56px 44px;transition:background .3s;}
+.hcard:hover{background:var(--surf3);}
+.hn{font-family:'Cormorant Garamond',serif;font-size:80px;font-weight:300;color:var(--bdr2);line-height:1;margin-bottom:32px;}
+.ht{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ivory);margin-bottom:14px;}
+.hd{font-size:13px;color:var(--ivory2);line-height:1.75;}
+
+/* FOOTER */
+footer{background:var(--surf1);border-top:1px solid var(--bdr);padding:60px 52px 36px;}
+.ftop{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:52px;margin-bottom:52px;padding-bottom:52px;border-bottom:1px solid var(--bdr);}
+.fbn{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--gold2);margin-bottom:14px;}
+.fbd{font-size:12px;color:var(--muted);line-height:1.75;}
+.fct{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
+.fcl{list-style:none;display:flex;flex-direction:column;gap:11px;}
+.fcl a{font-size:12px;color:var(--muted);text-decoration:none;transition:color .2s;}
+.fcl a:hover{color:var(--gold2);}
+.fbot{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .75s var(--ease),transform .75s var(--ease);}
+.rv.vis{opacity:1;transform:none;}
+
+@media(max-width:880px){
+  nav{padding:16px 22px;}
+  .nv{display:none;}
+  .hero,.ss,.formats,.gallery,.pricing,.how{padding:72px 22px;}
+  .hstats{gap:28px;}
+  .fmts,.gw,.pg,.hw,.ftop{grid-template-columns:1fr;}
+  .pkgs,.fr{grid-template-columns:1fr;}
+  body{cursor:auto;}
+  #cur,#cur-r{display:none;}
+  .kw{display:none;}
+  .fbot{flex-direction:column;gap:8px;text-align:center;}
+}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="cur-r"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nl">WWI <sub>Wedding Invites</sub></a>
+  <ul class="nv">
+    <li><a href="#formats">Services</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#order">Order</a></li>
+  </ul>
+  <a href="#order" class="nc">Begin Your Order</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hbg"></div>
+  <svg class="mandala" viewBox="0 0 400 400" fill="none">
+    <circle cx="200" cy="200" r="188" stroke="#c8903a" stroke-width=".4"/>
+    <circle cx="200" cy="200" r="158" stroke="#c8903a" stroke-width=".4"/>
+    <circle cx="200" cy="200" r="128" stroke="#c8903a" stroke-width=".4"/>
+    <circle cx="200" cy="200" r="98" stroke="#c8903a" stroke-width=".4"/>
+    <circle cx="200" cy="200" r="68" stroke="#c8903a" stroke-width=".4"/>
+    <circle cx="200" cy="200" r="38" stroke="#c8903a" stroke-width=".4"/>
+    <line x1="200" y1="12" x2="200" y2="388" stroke="#c8903a" stroke-width=".22"/>
+    <line x1="12" y1="200" x2="388" y2="200" stroke="#c8903a" stroke-width=".22"/>
+    <line x1="68" y1="68" x2="332" y2="332" stroke="#c8903a" stroke-width=".18"/>
+    <line x1="332" y1="68" x2="68" y2="332" stroke="#c8903a" stroke-width=".18"/>
+    <line x1="132" y1="12" x2="268" y2="388" stroke="#c8903a" stroke-width=".15"/>
+    <line x1="268" y1="12" x2="132" y2="388" stroke="#c8903a" stroke-width=".15"/>
+    <line x1="12" y1="132" x2="388" y2="268" stroke="#c8903a" stroke-width=".15"/>
+    <line x1="12" y1="268" x2="388" y2="132" stroke="#c8903a" stroke-width=".15"/>
+    <ellipse cx="200" cy="112" rx="10" ry="26" stroke="#c8903a" stroke-width=".32" transform="rotate(0 200 200)"/>
+    <ellipse cx="200" cy="112" rx="10" ry="26" stroke="#c8903a" stroke-width=".32" transform="rotate(45 200 200)"/>
+    <ellipse cx="200" cy="112" rx="10" ry="26" stroke="#c8903a" stroke-width=".32" transform="rotate(90 200 200)"/>
+    <ellipse cx="200" cy="112" rx="10" ry="26" stroke="#c8903a" stroke-width=".32" transform="rotate(135 200 200)"/>
+    <ellipse cx="200" cy="112" rx="10" ry="26" stroke="#c8903a" stroke-width=".32" transform="rotate(180 200 200)"/>
+    <ellipse cx="200" cy="112" rx="10" ry="26" stroke="#c8903a" stroke-width=".32" transform="rotate(225 200 200)"/>
+    <ellipse cx="200" cy="112" rx="10" ry="26" stroke="#c8903a" stroke-width=".32" transform="rotate(270 200 200)"/>
+    <ellipse cx="200" cy="112" rx="10" ry="26" stroke="#c8903a" stroke-width=".32" transform="rotate(315 200 200)"/>
+  </svg>
+  <div class="petal" style="width:10px;height:14px;background:#c8903a;left:11%;top:55%;--pd:10s;--pdl:0s;--pop:.35"></div>
+  <div class="petal" style="width:7px;height:10px;background:#9c1e35;left:22%;top:65%;--pd:13s;--pdl:2s;--pop:.25"></div>
+  <div class="petal" style="width:9px;height:13px;background:#e5ba78;left:81%;top:60%;--pd:9s;--pdl:.8s;--pop:.3"></div>
+  <div class="petal" style="width:8px;height:11px;background:#c8903a;left:72%;top:72%;--pd:14s;--pdl:3.5s;--pop:.28"></div>
+  <div class="petal" style="width:6px;height:9px;background:#9c1e35;left:91%;top:48%;--pd:11s;--pdl:1.5s;--pop:.32"></div>
+  <div class="petal" style="width:10px;height:14px;background:#e5ba78;left:42%;top:82%;--pd:12s;--pdl:4s;--pop:.22"></div>
+  <div class="hc">
+    <div class="hk">WhatsApp Wedding Invites</div>
+    <h1 class="hh">Your love story<br>deserves a<em>grand entrance.</em><span>Tradition, Digitized.</span></h1>
+    <p class="hs">Bespoke digital invitations crafted for WhatsApp — Image, Video &amp; PDF. Describe your vision, share your references. Receive a masterpiece in 24 hours.</p>
+    <div class="hbtns">
+      <a href="#order" class="bg">Break the Seal — Begin Order</a>
+      <a href="#gallery" class="bo">See Sample Invites</a>
+    </div>
+    <div class="hstats">
+      <div><div class="sn">500<span style="font-size:26px;color:var(--gold)">+</span></div><div class="sl">Couples Served</div></div>
+      <div><div class="sn">24<span style="font-size:26px;color:var(--gold)">h</span></div><div class="sl">Turnaround</div></div>
+      <div><div class="sn">₹500</div><div class="sl">Starting Price</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMATS -->
+<section class="formats" id="formats">
+  <div class="rv"><div class="se">Our Services</div><h2 class="sh">Three ways to say <em>"I Do."</em></h2><p class="sd">Every invite hand-crafted — we study your references and assets to build something that feels uniquely yours.</p></div>
+  <div class="fmts rv">
+    <div class="fc"><div class="fn">01 — Image</div><div class="ft">Still<br>Invite</div><div class="fp">Starting ₹500</div><div class="fdiv"></div><ul class="ff"><li>HD 1080×1920 design</li><li>WhatsApp &amp; Instagram optimised</li><li>2 revision rounds</li><li>24-hour delivery</li><li>Custom aesthetic from your references</li></ul></div>
+    <div class="fc"><span class="fbadge">Popular</span><div class="fn">02 — Video / PDF</div><div class="ft">Motion<br>or Booklet</div><div class="fp">Starting ₹1,500</div><div class="fdiv"></div><ul class="ff"><li>4K cinematic video or multi-page PDF</li><li>Custom background music</li><li>Story animation or interactive maps</li><li>Unlimited revisions</li><li>Shareable link option</li></ul></div>
+    <div class="fc"><div class="fn">03 — Bespoke</div><div class="ft">Full<br>Suite</div><div class="fp">Custom pricing</div><div class="fdiv"></div><ul class="ff"><li>Image + Video + PDF bundle</li><li>Dedicated senior designer</li><li>Priority 12-hour delivery</li><li>Animated RSVP microsite</li><li>Social media kit included</li></ul></div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+  <div class="rv"><div class="se">Sample Invitations</div><h2 class="sh">Crafted with <em>intention,</em><br>delivered with love.</h2></div>
+  <div class="gw rv">
+    <div class="gc gc1"><div class="gframe"></div><span class="gtag">Image</span>
+      <div class="gci">
+        <div style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:20px">Together With Their Families</div>
+        <div class="in">Priya<br>&amp; Arjun</div><div class="il"></div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px">Invite You To Their</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--ivory)">Wedding Celebration</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold);margin-top:12px;letter-spacing:.06em">28th December 2025</div>
+        <div class="id" style="margin-top:8px">The Grand Palace · Jaipur</div>
+        <div class="il"></div><div class="id">Mehndi · Sangeet · Wedding</div>
+      </div><div class="go"><span>Image Invite</span></div>
+    </div>
+    <div class="gc gc2"><div class="gframe"></div><span class="gtag">Video</span>
+      <div class="gci">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" style="margin-bottom:16px;opacity:.5"><circle cx="22" cy="22" r="20" stroke="#c8903a" stroke-width=".8"/><path d="M18 15l12 7-12 7V15z" fill="#c8903a"/></svg>
+        <div class="id" style="margin-bottom:14px">Cinematic Video Invite</div>
+        <div class="in">Rohit<br>&amp; Deepika</div><div class="il"></div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase">A Rajasthani Love Story</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold);margin-top:12px">14th February 2026</div>
+        <div class="id" style="margin-top:8px">Umaid Bhawan Palace</div>
+        <div class="il"></div><div class="id">Music · Animation · 4K</div>
+      </div><div class="go"><span>Video Invite</span></div>
+    </div>
+    <div class="gc gc3"><div class="gframe"></div><span class="gtag">PDF</span>
+      <div class="gci">
+        <div class="id" style="margin-bottom:20px">Wedding Booklet</div>
+        <div class="in">Aditya<br>&amp; Meera</div><div class="il"></div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase">Complete Programme</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold);margin-top:12px">7th March 2026</div>
+        <div class="id" style="margin-top:8px">ITC Grand Chola · Chennai</div>
+        <div class="il"></div>
+        <div style="text-align:left;font-size:11px;color:var(--muted);line-height:2.2"><div>✦ Event Schedule</div><div>✦ Venue &amp; Maps</div><div>✦ Dress Code</div><div>✦ RSVP Section</div></div>
+      </div><div class="go"><span>PDF Booklet</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="rv"><div class="se">Pricing</div><h2 class="sh">Invest in <em>elegance.</em></h2><p class="sd">Premium craft, without premium pricing.</p></div>
+  <div class="pg rv">
+    <div class="pc"><div class="pt">Base</div><div class="pn">Image Invite</div><div class="pp"><sup>₹</sup>500</div><div class="pper">per invite · 24h delivery</div><div class="pdiv"></div><ul class="pf"><li>1 Custom Image Invite</li><li>HD Resolution (1080×1920)</li><li>WhatsApp &amp; Instagram ready</li><li>2 Revision Rounds</li><li>24-Hour Turnaround</li></ul><a href="#order" class="pbtn" data-pkg="Base — ₹500">Order Image Invite</a></div>
+    <div class="pc hot"><div class="pt">Premium</div><div class="pn">Video or PDF</div><div class="pp"><sup>₹</sup>1,500</div><div class="pper">per invite · 24h delivery</div><div class="pdiv"></div><ul class="pf"><li>4K Video or Multi-page PDF</li><li>Custom background music</li><li>Story animation / interactive maps</li><li>Unlimited Revisions</li><li>Shareable link option</li></ul><a href="#order" class="pbtn" data-pkg="Premium — ₹1,500">Order Premium Invite</a></div>
+    <div class="pc"><div class="pt">Bespoke</div><div class="pn">Full Suite</div><div class="pp" style="font-size:36px;padding-top:10px">Custom</div><div class="pper">everything · priority 12h</div><div class="pdiv"></div><ul class="pf"><li>Image + Video + PDF bundle</li><li>Dedicated senior designer</li><li>Animated RSVP microsite</li><li>Social media kit</li><li>Lifetime asset access</li></ul><a href="#order" class="pbtn" data-pkg="Bespoke — Custom">Enquire Bespoke</a></div>
+  </div>
+</section>
+
+<!-- ══ SEAL / ORDER SECTION ══ -->
+<section class="ss" id="order">
+  <div class="sbg"></div>
+  <!-- Floating Sanskrit/wedding keywords -->
+  <div class="kw" style="top:13%;left:4%;--kd:9s;--kdl:0s;--kr:-4deg;--kr2:1deg;--kx:10px;--ky:-14px;--ky2:9px">Saat Phere</div>
+  <div class="kw" style="top:20%;right:5%;--kd:11s;--kdl:1.5s;--kr:3deg;--kr2:-2deg;--kx:-8px;--ky:-10px;--ky2:7px">Mangalsutra</div>
+  <div class="kw" style="top:46%;left:2%;--kd:8s;--kdl:.6s;--kr:-2deg;--kr2:3deg;--kx:12px;--ky:-8px;--ky2:11px">Forever</div>
+  <div class="kw" style="top:66%;left:6%;--kd:13s;--kdl:3s;--kr:2deg;--kr2:-1deg;--kx:9px;--ky:-12px;--ky2:8px">Sindoor</div>
+  <div class="kw" style="top:76%;right:4%;--kd:10s;--kdl:.3s;--kr:-3deg;--kr2:2deg;--kx:-10px;--ky:-9px;--ky2:12px">Milni</div>
+  <div class="kw" style="top:36%;right:3%;--kd:12s;--kdl:2s;--kr:1deg;--kr2:-3deg;--kx:-7px;--ky:-11px;--ky2:7px">Varmala</div>
+  <div class="kw" style="top:54%;right:7%;--kd:9.5s;--kdl:4.5s;--kr:-1deg;--kr2:2deg;--kx:8px;--ky:-7px;--ky2:10px">Blessings</div>
+  <div class="kw" style="top:28%;left:7%;--kd:10.5s;--kdl:2.2s;--kr:3deg;--kr2:-2deg;--kx:-11px;--ky:-9px;--ky2:8px">Together</div>
+  <div class="kw" style="top:85%;left:14%;--kd:14s;--kdl:1s;--kr:-1deg;--kr2:2deg;--kx:7px;--ky:-10px;--ky2:6px">Rishta</div>
+
+  <div class="shead rv">
+    <div class="se">Begin Your Order</div>
+    <h2 class="sh" style="text-align:center">Tell us about your <em>celebration.</em></h2>
+    <p class="sd" style="text-align:center;margin:14px auto 0">Break the seal to begin. Describe your vision, share references, upload your photos — we'll craft the rest.</p>
+  </div>
+
+  <!-- ENVELOPE -->
+  <div class="env rv" id="envEl">
+
+    <!-- FLAP -->
+    <div class="fwrap">
+      <div class="flap" id="flapEl">
+        <div class="flap-f" id="flapFront">
+          <!-- Wax seal -->
+          <div class="seal" id="sealEl">
+            <div class="seal-ring"></div>
+            <div class="seal-mono">W</div>
+            <svg class="seal-cracks" viewBox="0 0 88 88" fill="none" id="crackSvg">
+              <line class="cl" x1="44" y1="44" x2="7" y2="17" stroke-dasharray="46" stroke-dashoffset="46"/>
+              <line class="cl" x1="44" y1="44" x2="81" y2="15" stroke-dasharray="46" stroke-dashoffset="46"/>
+              <line class="cl" x1="44" y1="44" x2="75" y2="76" stroke-dasharray="42" stroke-dashoffset="42"/>
+              <line class="cl" x1="44" y1="44" x2="11" y2="78" stroke-dasharray="42" stroke-dashoffset="42"/>
+              <line class="cl" x1="44" y1="44" x2="44" y2="4" stroke-dasharray="40" stroke-dashoffset="40"/>
+            </svg>
+          </div>
+          <div class="hint">Click the seal to begin your order</div>
+          <div class="arr"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M3 9l5 5 5-5" stroke="rgba(200,144,58,.5)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="flap-b"></div>
+      </div>
+    </div>
+
+    <!-- BODY / FORM -->
+    <div class="envbody">
+      <div class="envcon" id="envCon">
+        <div class="prog"><div class="ps act" id="ps1"></div><div class="ps" id="ps2"></div><div class="ps" id="ps3"></div><div class="ps" id="ps4"></div><div class="ps" id="ps5"></div></div>
+
+        <!-- STEP 1 -->
+        <div class="step on" id="st1">
+          <div class="tmsg"><div class="tav">W</div><div class="tbbl">Namaste! 🙏 Welcome to <strong>WhatsApp Wedding Invites.</strong> Let's create something beautiful for your special day.<br><br>Which package fits your celebration?</div></div>
+          <div class="pkgs">
+            <div class="pkg" onclick="selP(this,'Base — ₹500')"><div class="pkgn">Image</div><div class="pkgp">Starting ₹500</div><div class="pkgd">High-res static card, perfect for groups</div></div>
+            <div class="pkg" onclick="selP(this,'Premium — ₹1,500')"><div class="pkgn">Video / PDF</div><div class="pkgp">Starting ₹1,500</div><div class="pkgd">Cinematic video or interactive PDF booklet</div></div>
+            <div class="pkg" onclick="selP(this,'Bespoke — Custom')"><div class="pkgn">Bespoke</div><div class="pkgp">Custom pricing</div><div class="pkgd">Full suite — image, video, PDF &amp; more</div></div>
+          </div>
+          <div class="snav"><button class="sbt p" id="n1btn" onclick="nxt(1)" disabled>Continue →</button></div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step" id="st2">
+          <div class="tmsg"><div class="tav">W</div><div class="tbbl">Wonderful! Now — who is this beautiful celebration for?</div></div>
+          <div class="fr"><div class="fg"><label class="fl">Partner 1 Name</label><input type="text" class="fi" id="fn1" placeholder="e.g. Priya Sharma"></div><div class="fg"><label class="fl">Partner 2 Name</label><input type="text" class="fi" id="fn2" placeholder="e.g. Arjun Mehta"></div></div>
+          <div class="fr"><div class="fg"><label class="fl">Wedding Date</label><input type="date" class="fi" id="fdate"></div><div class="fg"><label class="fl">Venue</label><input type="text" class="fi" id="fvenue" placeholder="e.g. The Grand Palace, Jaipur"></div></div>
+          <div class="fr one"><div class="fg"><label class="fl">Your WhatsApp Number</label><input type="tel" class="fi" id="fphone" placeholder="+91 98765 43210"></div></div>
+          <div class="snav"><button class="sbt" onclick="prv(2)">← Back</button><button class="sbt p" onclick="nxt(2)">Continue →</button></div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step" id="st3">
+          <div class="tmsg"><div class="tav">W</div><div class="tbbl">Now the creative part — <strong>describe the vibe you're envisioning.</strong><br><br>Colour palette, mood, cultural elements, style (royal, minimal, playful…). Then paste reference links — Instagram posts, Pinterest boards, invites you love.</div></div>
+          <div class="fr one" style="margin-top:14px"><div class="fg"><label class="fl">Describe Your Vision</label><textarea class="fi" id="fvision" placeholder="e.g. Deep burgundy and gold, very royal Rajasthani feel — Sabyasachi aesthetic with rich fabrics and intricate borders. For the video, start with the Milky Way slowly revealing our names…"></textarea></div></div>
+          <div style="margin-top:14px"><label class="fl" style="display:block;margin-bottom:8px">Reference Links (Instagram, Pinterest, etc.)</label><div id="rlwrap"><div class="rlr"><input type="url" class="rli" placeholder="Paste a link to a design you love…"><button class="rladd" onclick="addRL()">+</button></div></div></div>
+          <div class="snav"><button class="sbt" onclick="prv(3)">← Back</button><button class="sbt p" onclick="nxt(3)">Continue →</button></div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="step" id="st4">
+          <div class="tmsg"><div class="tav">W</div><div class="tbbl">Almost there! <strong>Upload your photos, videos, or files</strong> — couple shots, family photos, any logo or monogram.<br><br>Don't have everything? You can always send more via WhatsApp after submitting.</div></div>
+          <div class="upz" id="dropZ"><input type="file" id="fileIn" multiple accept="image/*,video/*,application/pdf" onchange="handleF(this.files)"><div class="upi">✦</div><div class="upt"><span>Click to upload</span> or drag &amp; drop<br>Photos, videos, PDFs — up to 50MB each</div></div>
+          <div class="flist" id="flist"></div>
+          <div class="snav"><button class="sbt" onclick="prv(4)">← Back</button><button class="sbt p" onclick="nxt(4)">Review Order →</button></div>
+        </div>
+
+        <!-- STEP 5 -->
+        <div class="step" id="st5">
+          <div class="tmsg"><div class="tav">W</div><div class="tbbl">Here's a summary of your order. Review and hit <strong>Send to Team</strong> — we'll reply within 2 hours to confirm and begin crafting. 🎉</div></div>
+          <div class="smry" id="smry"></div>
+          <a href="#" class="wabtn" id="walink" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Send to Team on WhatsApp
+          </a>
+          <div style="text-align:center;margin-top:14px"><button class="sbt" onclick="prv(5)">← Edit Order</button></div>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /env -->
+</section>
+
+<!-- HOW -->
+<section class="how" id="how">
+  <div class="rv"><div class="se">The Process</div><h2 class="sh">From vision to <em>masterpiece</em><br>in 24 hours.</h2></div>
+  <div class="hw rv">
+    <div class="hcard"><div class="hn">01</div><div class="ht">Describe &amp; Share</div><div class="hd">Tell us your vision — colours, mood, cultural elements. Paste references from Instagram or Pinterest. Upload couple photos. No design knowledge needed.</div></div>
+    <div class="hcard"><div class="hn">02</div><div class="ht">We Craft</div><div class="hd">Our designers study every reference and asset. We blend your story with traditional and modern aesthetics, handcrafting every detail to fit your vision and budget.</div></div>
+    <div class="hcard"><div class="hn">03</div><div class="ht">Receive &amp; Share</div><div class="hd">Your polished invite arrives within 24 hours, WhatsApp-optimised and ready to share. Revisions included — we work until it's perfect.</div></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ftop">
+    <div><div class="fbn">WhatsApp Wedding Invites</div><p class="fbd">Tradition, Digitized. Bespoke digital wedding invitations for the modern Indian celebration. Delivered to WhatsApp in 24 hours.</p></div>
+    <div><div class="fct">Navigate</div><ul class="fcl"><li><a href="#formats">Services</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#order">Order Now</a></li></ul></div>
+    <div><div class="fct">Contact</div><ul class="fcl"><li><a href="https://wa.me/919999999999">WhatsApp Us</a></li><li><a href="mailto:hello@wwi.in">hello@wwi.in</a></li><li><a href="#">Instagram</a></li></ul></div>
+  </div>
+  <div class="fbot"><span>© 2026 WhatsApp Wedding Invites. Crafted with ✦ for modern celebrations.</span><span>₹500 · 24h · 100% custom</span></div>
+</footer>
+
+<script>
+/* CURSOR */
+const C=document.getElementById('cur'),R=document.getElementById('cur-r');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function t(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;
+C.style.left=mx+'px';C.style.top=my+'px';
+R.style.left=rx+'px';R.style.top=ry+'px';
+requestAnimationFrame(t);})();
+document.querySelectorAll('a,button,.pkg,.gc,.pc,.fc,.hcard').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
+});
+
+/* SCROLL REVEAL */
+const ob=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');ob.unobserve(e.target);}});},{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>ob.observe(el));
+
+/* WAX SEAL BREAK */
+const flap=document.getElementById('flapEl'),env=document.getElementById('envEl'),con=document.getElementById('envCon'),seal=document.getElementById('sealEl');
+let opened=false;
+
+function openEnvelope(){
+  if(opened)return;opened=true;
+  // Crack animation
+  seal.classList.add('crack');
+  // Shake
+  seal.animate([{transform:'none'},{transform:'rotate(-5deg) scale(1.09)'},{transform:'rotate(4deg) scale(1.06)'},{transform:'rotate(-3deg) scale(1.07)'},{transform:'rotate(1deg) scale(1.04)'},{transform:'none'}],{duration:400,delay:80,easing:'ease-in-out'});
+  // Flap opens
+  setTimeout(()=>{flap.classList.add('open');},520);
+  // Form appears
+  setTimeout(()=>{env.classList.add('opened');},1120);
+}
+
+seal.addEventListener('click',openEnvelope);
+document.getElementById('flapFront').addEventListener('click',openEnvelope);
+
+// Pricing cards pre-select
+document.querySelectorAll('.pbtn[data-pkg]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const map={'Base — ₹500':0,'Premium — ₹1,500':1,'Bespoke — Custom':2};
+    const pkgs=document.querySelectorAll('.pkg');
+    pkgs.forEach(p=>p.classList.remove('sel'));
+    const idx=map[btn.dataset.pkg];
+    if(idx!==undefined){pkgs[idx].classList.add('sel');sPkg=btn.dataset.pkg;document.getElementById('n1btn').disabled=false;}
+    setTimeout(openEnvelope,120);
+  });
+});
+
+/* ORDER FLOW */
+let cStep=1,sPkg='',files=[];
+
+function selP(el,pkg){
+  document.querySelectorAll('.pkg').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');sPkg=pkg;
+  document.getElementById('n1btn').disabled=false;
+}
+function updP(n){
+  for(let i=1;i<=5;i++){
+    const p=document.getElementById('ps'+i);
+    if(i<n){p.classList.add('done');p.classList.remove('act');}
+    else if(i===n){p.classList.remove('done');p.classList.add('act');}
+    else{p.classList.remove('done','act');}
+  }
+}
+function showStep(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('on'));
+  document.getElementById('st'+n).classList.add('on');
+  updP(n);cStep=n;
+  document.getElementById('envEl').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function nxt(f){if(f===4)buildSmry();showStep(f+1);}
+function prv(f){showStep(f-1);}
+function addRL(){
+  const c=document.getElementById('rlwrap'),r=document.createElement('div');
+  r.className='rlr';r.innerHTML=`<input type="url" class="rli" placeholder="Another reference…"><button class="rladd" onclick="this.parentElement.remove()">×</button>`;
+  c.appendChild(r);
+}
+function handleF(fl){
+  Array.from(fl).forEach(f=>{
+    files.push(f);
+    const ico=f.type.startsWith('video')?'🎬':f.type.startsWith('image')?'🖼':'📄';
+    const r=document.createElement('div');r.className='frow';
+    r.innerHTML=`<span class="fico">${ico}</span><span class="fnm">${f.name}</span><span style="font-size:11px;color:var(--muted);flex-shrink:0">${(f.size/1024/1024).toFixed(1)}MB</span><button class="frm" onclick="this.parentElement.remove()">×</button>`;
+    document.getElementById('flist').appendChild(r);
+  });
+}
+const dz=document.getElementById('dropZ');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dov');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('dov'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dov');handleF(e.dataTransfer.files);});
+
+function buildSmry(){
+  const n1=document.getElementById('fn1').value||'—',n2=document.getElementById('fn2').value||'—';
+  const dt=document.getElementById('fdate').value||'—',vn=document.getElementById('fvenue').value||'—';
+  const ph=document.getElementById('fphone').value||'—',vi=document.getElementById('fvision').value||'—';
+  const links=[...document.querySelectorAll('.rli')].map(i=>i.value).filter(v=>v.trim());
+  const fnames=files.map(f=>f.name);
+  document.getElementById('smry').innerHTML=`<strong>Package:</strong> ${sPkg}<br><strong>Couple:</strong> ${n1} &amp; ${n2}<br><strong>Date:</strong> ${dt}<br><strong>Venue:</strong> ${vn}<br><strong>Contact:</strong> ${ph}<br><strong>Vision:</strong> ${vi.substring(0,200)}${vi.length>200?'…':''}<br><strong>References:</strong> ${links.length?links.join(', '):'None added'}<br><strong>Files:</strong> ${fnames.length?fnames.join(', '):'Will send via WhatsApp'}`;
+  const msg=`Hi! I'd like to order a wedding invite 🎉\n\n*Package:* ${sPkg}\n*Couple:* ${n1} & ${n2}\n*Date:* ${dt}\n*Venue:* ${vn}\n*My Number:* ${ph}\n\n*My Vision:*\n${vi}\n\n*References:* ${links.length?links.join(' | '):'Will share separately'}\n*Files:* ${fnames.length?fnames.join(', '):'Will send via WhatsApp'}`;
+  document.getElementById('walink').href='https://wa.me/919999999999?text='+encodeURIComponent(msg);
+}
+</script>
+</body>
+</html>

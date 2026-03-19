@@ -1,233 +1,166 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-
-type PreviewType = "image" | "video" | "pdf";
-
-const previews: Record<PreviewType, { content: React.ReactNode; label: string }> = {
-  image: {
-    label: "Image",
-    content: (
-      <div className="w-full aspect-[3/4] rounded-lg overflow-hidden relative bg-gradient-to-br from-charcoal-light to-charcoal">
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-          <div className="w-12 h-12 rounded-full border border-gold/30 flex items-center justify-center mb-3">
-            <span className="text-xl">💍</span>
-          </div>
-          <p className="font-serif text-lg text-offwhite">Priya & Arjun</p>
-          <p className="text-gold text-[10px] tracking-widest uppercase mt-1">Wedding Celebration</p>
-          <div className="w-8 h-px bg-gold/30 mt-3 mb-2" />
-          <p className="text-offwhite/50 text-[10px]">Dec 28, 2025 · Jaipur</p>
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 to-transparent" />
-      </div>
-    ),
-  },
-  video: {
-    label: "Video",
-    content: (
-      <div className="w-full aspect-[9/16] rounded-lg overflow-hidden relative">
-        <div
-          className="w-full h-full animate-gradient"
-          style={{
-            background: "linear-gradient(135deg, #1A2E2E 0%, #2D1B3D 33%, #2E1A1A 66%, #1A1A2E 100%)",
-            backgroundSize: "400% 400%",
-          }}
-        />
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-          <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center mb-2 animate-pulse-glow">
-            <svg className="w-5 h-5 text-gold" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <p className="font-serif text-sm text-offwhite">Priya & Arjun</p>
-          <p className="text-gold text-[8px] tracking-widest uppercase">Save the Date</p>
-        </div>
-      </div>
-    ),
-  },
-  pdf: {
-    label: "PDF",
-    content: (
-      <div className="w-full aspect-[3/4] rounded-lg overflow-hidden relative bg-offwhite/5">
-        <div className="p-4">
-          <div className="border-b border-offwhite/10 pb-3 mb-3">
-            <p className="font-serif text-sm text-gold text-center">Wedding Invitation</p>
-          </div>
-          <div className="space-y-3 text-[9px] text-offwhite/50">
-            <div className="text-center">
-              <p className="font-serif text-base text-offwhite mb-1">Priya & Arjun</p>
-              <p className="text-gold text-[8px] tracking-wider uppercase">Request your presence</p>
-            </div>
-            <div className="w-6 h-px bg-gold/30 mx-auto" />
-            <div className="space-y-1">
-              <p className="flex items-center gap-1"><span className="text-gold">📅</span> December 28, 2025</p>
-              <p className="flex items-center gap-1"><span className="text-gold">📍</span> Grand Palace, Jaipur</p>
-              <p className="flex items-center gap-1"><span className="text-gold">🕐</span> 6:00 PM Onwards</p>
-            </div>
-            <div className="glass rounded-lg p-2 text-center">
-              <p className="text-[8px] text-gold">RSVP by Dec 15</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    ),
-  },
-};
+import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export function WhatsAppPreview() {
-  const [activeType, setActiveType] = useState<PreviewType>("video");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const phoneRef = useRef<HTMLDivElement>(null);
+  const [stage, setStage] = useState<"locked" | "notified" | "opened">("locked");
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top center",
+        end: "bottom center",
+        onEnter: () => setStage("notified"),
+        onLeaveBack: () => setStage("locked"),
+        onUpdate: (self) => {
+          if (self.progress > 0.6) setStage("opened");
+          else if (self.progress > 0.1) setStage("notified");
+          else setStage("locked");
+        }
+      }
+    });
+
+    return () => {
+      tl.kill();
+    };
+  }, []);
 
   return (
-    <section id="preview" className="relative section-padding overflow-hidden">
-      <div className="max-w-6xl mx-auto">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <p className="text-gold text-sm font-semibold tracking-[0.2em] uppercase mb-4">
-            Live Preview
-          </p>
-          <h2 className="heading-lg mb-4">
-            See It in{" "}
-            <span className="text-gold-gradient italic">WhatsApp</span>
-          </h2>
-          <p className="text-offwhite/50 max-w-2xl mx-auto">
-            Toggle between formats to see exactly how your invite will look inside a WhatsApp chat.
-          </p>
-        </motion.div>
-
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-          {/* Controls */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="flex-1 w-full"
+    <section ref={containerRef} className="relative min-h-[150vh] bg-onyx section-padding flex flex-col items-center">
+      <div className="sticky top-20 w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-20">
+        {/* Left Side: Content */}
+        <div className="flex-1 text-center lg:text-left">
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="text-champagne text-xs font-semibold tracking-widest uppercase mb-4"
           >
-            <div className="space-y-4 mb-8">
-              {(Object.keys(previews) as PreviewType[]).map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setActiveType(type)}
-                  className={`w-full text-left p-4 rounded-xl transition-all duration-300 ${
-                    activeType === type
-                      ? "glass-intense border-gold/30 shadow-[0_0_20px_rgba(201,169,110,0.1)]"
-                      : "glass hover:border-offwhite/10"
-                  }`}
-                  data-cursor="premium"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className={`font-medium text-sm ${activeType === type ? "text-gold" : "text-offwhite/60"}`}>
-                        {previews[type].label} Invite
-                      </p>
-                      <p className="text-offwhite/30 text-xs mt-0.5">
-                        {type === "image" && "Static high-res card"}
-                        {type === "video" && "Animated motion invite"}
-                        {type === "pdf" && "Multi-page document"}
-                      </p>
-                    </div>
-                    <div className={`w-3 h-3 rounded-full transition-all ${
-                      activeType === type ? "bg-gold shadow-[0_0_10px_var(--gold)]" : "bg-offwhite/10"
-                    }`} />
-                  </div>
-                </button>
-              ))}
+            Experience
+          </motion.p>
+          <h2 className="heading-lg mb-6">See It In Motion</h2>
+          <p className="text-pearl/50 text-lg lg:text-xl font-light leading-relaxed max-w-md mx-auto lg:mx-0">
+            Experience how your invite feels in the hands of your guests. 
+            Crisp, responsive, and breathtaking. Watch as the magic unfolds 
+            directly on their device.
+          </p>
+          
+          <div className="mt-12 flex flex-col gap-6">
+            <div className={`transition-all duration-500 flex items-center gap-4 ${stage === "notified" ? "opacity-100" : "opacity-30"}`}>
+                <div className="w-2 h-2 rounded-full bg-champagne" />
+                <span className="text-pearl text-sm uppercase tracking-widest">The Arrival</span>
             </div>
-
-            <div className="glass p-6 rounded-xl">
-              <p className="text-offwhite/40 text-xs uppercase tracking-wider mb-2">How it works</p>
-              <p className="text-offwhite/60 text-sm leading-relaxed">
-                Your invite is optimized for WhatsApp&apos;s compression. We ensure it looks crisp on any device — 
-                from budget smartphones to the latest flagships.
-              </p>
+            <div className={`transition-all duration-500 flex items-center gap-4 ${stage === "opened" ? "opacity-100" : "opacity-30"}`}>
+                <div className="w-2 h-2 rounded-full bg-champagne" />
+                <span className="text-pearl text-sm uppercase tracking-widest">The Unveiling</span>
             </div>
-          </motion.div>
+          </div>
+        </div>
 
-          {/* Phone Preview */}
+        {/* Right Side: 3D Phone */}
+        <div className="flex-1 perspective-2000 py-20">
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex-shrink-0"
-            data-cursor="premium"
+            ref={phoneRef}
+            style={{
+                rotateY: stage === "locked" ? -20 : 0,
+                rotateX: stage === "locked" ? 10 : 0,
+            }}
+            className="relative w-[300px] h-[600px] transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
           >
-            <div className="relative">
-              {/* Glow */}
-              <div className="absolute inset-0 bg-gold/5 rounded-[50px] blur-3xl scale-110" />
+            {/* iPhone Body */}
+            <div className="absolute inset-0 bg-[#0a0a0a] rounded-[50px] border-[8px] border-[#1a1a1a] shadow-[0_50px_100px_rgba(0,0,0,0.8)] overflow-hidden">
+                {/* Screen Content */}
+                <div className="relative w-full h-full bg-onyx flex flex-col">
+                    {/* Lock Screen */}
+                    <AnimatePresence>
+                        {stage !== "opened" && (
+                            <motion.div 
+                                initial={{ opacity: 1 }}
+                                exit={{ opacity: 0, y: -100 }}
+                                transition={{ duration: 0.8, ease: "easeInOut" }}
+                                className="absolute inset-0 z-30 bg-black/40 backdrop-blur-md flex flex-col items-center pt-20"
+                            >
+                                <span className="text-pearl/80 text-6xl font-light mb-2">9:41</span>
+                                <span className="text-pearl/40 text-sm uppercase tracking-widest">Thursday, March 19</span>
+                                
+                                {/* Notification */}
+                                <AnimatePresence>
+                                    {stage === "notified" && (
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                                            className="mt-20 w-[260px] bg-white/10 backdrop-blur-xl border border-white/10 p-4 rounded-3xl"
+                                        >
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <div className="w-5 h-5 rounded-md bg-emerald-500 flex items-center justify-center text-[10px]">WA</div>
+                                                <span className="text-pearl/80 text-[10px] font-bold uppercase tracking-tight">WhatsApp</span>
+                                                <span className="text-pearl/40 text-[10px] ml-auto">now</span>
+                                            </div>
+                                            <p className="text-pearl text-xs font-bold mb-0.5">Wedding Invitation</p>
+                                            <p className="text-pearl/60 text-xs line-clamp-1">You are cordially invited to celebrate...</p>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
 
-              <div className="phone-mockup glass-intense relative">
-                {/* WhatsApp header */}
-                <div className="absolute top-0 left-0 right-0 bg-[#202C33] z-20 rounded-t-[33px] md:rounded-t-[37px]">
-                  <div className="h-7" /> {/* Notch space */}
-                  <div className="flex items-center gap-3 px-4 py-2">
-                    <svg className="w-5 h-5 text-offwhite/60" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                    </svg>
-                    <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center text-xs">
-                      💒
+                                <div className="mt-auto pb-10">
+                                    <div className="w-32 h-1 bg-pearl/20 rounded-full" />
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Opened Invite */}
+                    <div className="flex-1 flex flex-col">
+                        <div className="h-20 bg-[#202C33] flex items-center px-6 pt-8 gap-4">
+                            <div className="w-8 h-8 rounded-full bg-champagne/20 flex items-center justify-center text-xs">💍</div>
+                            <div>
+                                <p className="text-pearl text-[10px] font-bold">Wedding Gallery</p>
+                                <p className="text-emerald-400 text-[8px]">online</p>
+                            </div>
+                        </div>
+                        <div className="flex-1 bg-[#0b141a] p-4 flex flex-col gap-4 overflow-hidden">
+                            <div className="w-[80%] bg-[#202c33] rounded-2xl rounded-tl-none p-3 self-start">
+                                <p className="text-pearl/80 text-[10px]">Tap to view your bespoke invitation ✨</p>
+                            </div>
+                            
+                            <motion.div 
+                                animate={stage === "opened" ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }}
+                                className="w-full aspect-[3/4] rounded-2xl overflow-hidden relative shadow-2xl"
+                            >
+                                <div 
+                                    className="absolute inset-0 bg-cover bg-center"
+                                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80')" }}
+                                />
+                                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+                                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                                    <h4 className="heading-md text-xl text-pearl mb-2">Priya & Arjun</h4>
+                                    <div className="w-8 h-px bg-champagne/40 mb-3" />
+                                    <p className="text-champagne text-[8px] uppercase tracking-[0.2em] font-bold">Invite You</p>
+                                </div>
+                            </motion.div>
+                        </div>
                     </div>
-                    <div>
-                      <p className="text-offwhite text-xs font-medium">Family Group</p>
-                      <p className="text-offwhite/40 text-[10px]">52 members</p>
-                    </div>
-                  </div>
+
+                    {/* Home bar */}
+                    <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-white/20 rounded-full z-40" />
                 </div>
 
-                {/* Chat area */}
-                <div className="absolute inset-0 pt-24 pb-14 px-3 wa-chat-bg rounded-[33px] md:rounded-[37px] overflow-hidden">
-                  <div className="flex flex-col gap-2 h-full overflow-y-auto">
-                    {/* Incoming message */}
-                    <div className="wa-bubble max-w-[85%]">
-                      <p className="text-[10px] text-emerald-400 font-medium mb-1">Mom ❤️</p>
-                      <p className="text-[11px]">Look what came! 🎉✨</p>
-                      <p className="text-[8px] text-offwhite/40 text-right mt-1">11:42 AM</p>
-                    </div>
-
-                    {/* The invite preview */}
-                    <div className="wa-bubble max-w-[85%]">
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={activeType}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          {previews[activeType].content}
-                        </motion.div>
-                      </AnimatePresence>
-                      <p className="text-[8px] text-offwhite/40 text-right mt-1">11:42 AM</p>
-                    </div>
-
-                    {/* Reaction */}
-                    <div className="wa-bubble wa-bubble-sent max-w-[60%]">
-                      <p className="text-[11px]">This is SO beautiful! 😍🥹</p>
-                      <p className="text-[8px] text-offwhite/40 text-right mt-1">11:43 AM</p>
-                    </div>
-                  </div>
+                {/* Notch */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-[#1a1a1a] rounded-b-2xl z-50 flex items-center justify-center gap-2">
+                    <div className="w-10 h-1 bg-black/40 rounded-full" />
+                    <div className="w-2 h-2 rounded-full bg-blue-900/20" />
                 </div>
-
-                {/* Input bar */}
-                <div className="absolute bottom-0 left-0 right-0 bg-[#202C33] rounded-b-[33px] md:rounded-b-[37px] px-3 py-2 flex items-center gap-2">
-                  <div className="flex-1 bg-[#2A3942] rounded-full px-3 py-1.5">
-                    <p className="text-offwhite/30 text-[10px]">Type a message</p>
-                  </div>
-                  <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center">
-                    <svg className="w-4 h-4 text-gold" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
             </div>
+
+            {/* Reflection flare */}
+            <div className="absolute -inset-20 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none rotate-45 transform-gpu" />
           </motion.div>
         </div>
       </div>

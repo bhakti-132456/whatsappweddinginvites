@@ -1,161 +1,164 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import gsap from "gsap";
 
 export function Hero() {
+  const videoSideRef = useRef<HTMLDivElement>(null);
+  const maskRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const videoSide = videoSideRef.current;
+    const mask = maskRef.current;
+
+    if (!videoSide || !mask) return;
+
+    const moveMask = (e: MouseEvent) => {
+      const rect = videoSide.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      gsap.to(mask, {
+        x: x,
+        y: y,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+    };
+
+    videoSide.addEventListener("mousemove", moveMask);
+
+    return () => {
+      videoSide.removeEventListener("mousemove", moveMask);
+    };
+  }, []);
+
+  const titleWords = "Love, Encapsulated in a Pixel.".split(" ");
+
   return (
-    <section
-      id="hero"
-      className="relative min-h-screen flex flex-col items-center justify-center section-padding overflow-hidden"
-    >
-      {/* Background gradient orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-gold/5 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-jewel-ruby/5 blur-3xl" />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-        {/* Text Content */}
-        <div className="flex-1 text-center lg:text-left">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <p className="text-gold text-sm md:text-base font-semibold tracking-[0.2em] uppercase mb-6">
-              WhatsApp Wedding Invites
-            </p>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="heading-xl mb-6"
-          >
-            Tradition,{" "}
-            <span className="text-gold-gradient italic">Digitized.</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="text-offwhite/60 text-base md:text-lg max-w-lg mx-auto lg:mx-0 mb-10 leading-relaxed"
-          >
-            Expert-crafted digital wedding invitations for WhatsApp.
-            Image, Video & PDF — delivered in under{" "}
-            <span className="text-gold font-semibold">24 hours</span>,
-            starting at just{" "}
-            <span className="text-gold font-semibold">₹500</span>.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-          >
-            <a
-              href="https://wa.me/919999999999?text=Hi%2C%20I%27d%20like%20to%20order%20a%20wedding%20invite!"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="clay px-8 py-4 text-charcoal font-bold text-base tracking-wide text-center"
-              data-cursor="cta"
-            >
-              Order Now — ₹500
-            </a>
-            <a
-              href="#services"
-              className="glass px-8 py-4 text-offwhite font-medium text-base tracking-wide text-center hover:bg-glass-hover transition-colors"
-              data-cursor="premium"
-            >
-              Explore Services
-            </a>
-          </motion.div>
-
-          {/* Trust badges */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            className="flex items-center gap-6 mt-10 justify-center lg:justify-start text-offwhite/40 text-sm"
-          >
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-gold" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-              500+ Invites
-            </div>
-            <div className="w-px h-4 bg-offwhite/20" />
-            <div>24h Delivery</div>
-            <div className="w-px h-4 bg-offwhite/20" />
-            <div>100% Custom</div>
-          </motion.div>
-        </div>
-
-        {/* Phone Mockup */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, rotateY: -10 }}
-          animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-          transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="flex-shrink-0"
-          data-cursor="premium"
+    <section className="relative min-h-screen flex flex-col lg:flex-row overflow-hidden bg-onyx">
+      {/* Left Side: Typography */}
+      <div className="flex-1 flex flex-col justify-center px-8 lg:px-20 py-20 z-10">
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-champagne text-xs md:text-sm font-semibold tracking-[0.3em] uppercase mb-8"
         >
-          <div className="relative">
-            {/* Glow behind phone */}
-            <div className="absolute inset-0 bg-gold/10 rounded-[50px] blur-3xl scale-110" />
+          Reimagining Tradition
+        </motion.p>
 
-            <div className="phone-mockup glass-intense relative">
-              {/* Status bar */}
-              <div className="absolute top-0 left-0 right-0 h-11 flex items-end justify-between px-6 z-20 text-[10px] text-offwhite/60">
-                <span>9:41</span>
-                <span className="flex gap-1">
-                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
-                </span>
-              </div>
+        <h1 className="heading-xl mb-8 flex flex-wrap gap-x-4">
+          {titleWords.map((word, i) => (
+            <motion.span
+              key={i}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 1,
+                delay: 0.2 + i * 0.1,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="inline-block"
+            >
+              {word}
+            </motion.span>
+          ))}
+        </h1>
 
-              {/* Video invite loop simulation */}
-              <div className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-[33px] md:rounded-[37px]">
-                <div
-                  className="w-full h-full animate-gradient"
-                  style={{
-                    background: "linear-gradient(135deg, #1A1A2E 0%, #2D1B3D 25%, #1A2E2E 50%, #2E1A1A 75%, #1A1A2E 100%)",
-                    backgroundSize: "400% 400%",
-                  }}
-                />
-                {/* Overlay content */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
-                  <div className="w-16 h-16 rounded-full border-2 border-gold/40 flex items-center justify-center mb-4 animate-pulse-glow">
-                    <span className="text-2xl">💍</span>
-                  </div>
-                  <p className="font-serif text-xl md:text-2xl text-offwhite mb-1">Priya & Arjun</p>
-                  <p className="text-gold text-xs tracking-widest uppercase">Invite You To Their</p>
-                  <p className="font-serif text-lg text-offwhite/80 mt-1">Wedding Celebration</p>
-                  <div className="mt-4 w-12 h-px bg-gold/40" />
-                  <p className="text-offwhite/50 text-xs mt-3">December 28, 2025</p>
-                  <p className="text-offwhite/40 text-[10px]">The Grand Palace, Jaipur</p>
-                </div>
-              </div>
-            </div>
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="text-pearl/60 text-lg md:text-xl max-w-xl mb-12 leading-relaxed font-light"
+        >
+          The digital invitation, elevated. Cinematic motion, interactive
+          folios, and bespoke artistry delivered to your guest’s palm in 24 hours.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1 }}
+          className="flex flex-col sm:flex-row gap-6"
+        >
+          <button className="btn-premium btn-liquid" data-cursor="cta">
+            <span className="relative z-10">Begin Your Story</span>
+            <div className="liquid"></div>
+          </button>
+          <button className="btn-premium-outline" data-cursor="premium">
+            View the Gallery
+          </button>
+        </motion.div>
+
+        {/* Philosophy snippet */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 1.5 }}
+          className="mt-20 pt-10 border-t border-pearl/10"
+        >
+          <div className="flex items-start gap-6 max-w-lg">
+            <span className="text-champagne text-xs font-serif italic">01 (Philosophy)</span>
+            <p className="text-pearl/40 text-sm leading-relaxed">
+              Beyond a Link. An Experience. By blending heritage aesthetics with
+              modern interactivity, we create digital heirlooms that resonate far
+              beyond the screen.
+            </p>
           </div>
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      {/* Right Side: Video Mask following cursor */}
+      <div
+        ref={videoSideRef}
+        className="hidden lg:block relative flex-1 bg-onyx-light overflow-hidden"
       >
-        <span className="text-offwhite/30 text-xs tracking-widest uppercase">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-5 h-8 rounded-full border border-offwhite/20 flex items-start justify-center pt-1.5"
+        {/* Placeholder image/video for when not hovered */}
+        <div 
+          className="absolute inset-0 grayscale opacity-20 transition-opacity duration-700 hover:opacity-10"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80')",
+            backgroundSize: "cover",
+            backgroundPosition: "center"
+          }}
+        />
+
+        {/* The Mask Element */}
+        <div
+          ref={maskRef}
+          className="absolute top-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none z-20 shadow-[0_0_100px_rgba(0,0,0,0.5)] overflow-hidden"
+          style={{
+            transform: "translate(-50%, -50%)",
+          }}
         >
-          <div className="w-1 h-2 rounded-full bg-gold" />
-        </motion.div>
-      </motion.div>
+          <div 
+            className="absolute top-1/2 left-1/2 w-screen h-screen -translate-x-1/2 -translate-y-1/2"
+            style={{
+              backgroundImage: "url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80')",
+              backgroundSize: "cover",
+              backgroundPosition: "center"
+            }}
+          />
+        </div>
+
+        {/* Cinematic frame element */}
+        <div className="absolute inset-0 border-[40px] border-onyx z-30 pointer-events-none opacity-50" />
+      </div>
+
+      {/* Mobile background/image (Hero) */}
+      <div className="lg:hidden h-80 w-full relative">
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80')",
+            backgroundSize: "cover",
+            backgroundPosition: "center"
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-onyx to-transparent" />
+      </div>
     </section>
   );
 }

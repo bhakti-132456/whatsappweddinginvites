@@ -24,6 +24,9 @@
 # misc
 .DS_Store
 *.pem
+._*
+.Spotlight-V100
+.Trashes
 
 # debug
 npm-debug.log*

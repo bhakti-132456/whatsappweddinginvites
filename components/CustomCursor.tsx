@@ -1,115 +1,147 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import gsap from "gsap";
 
 export function CustomCursor() {
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-  const springX = useSpring(cursorX, { damping: 25, stiffness: 300 });
-  const springY = useSpring(cursorY, { damping: 25, stiffness: 300 });
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const followerRef = useRef<HTMLDivElement>(null);
   const [variant, setVariant] = useState<"default" | "premium" | "cta">("default");
   const [isVisible, setIsVisible] = useState(false);
-  const rafRef = useRef<number>(0);
 
   useEffect(() => {
-    // Hide on touch devices
-    if (typeof window !== "undefined" && "ontouchstart" in window) return;
+    if (typeof window === "undefined" || "ontouchstart" in window) return;
 
-    const onMouseMove = (e: MouseEvent) => {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(() => {
-        cursorX.set(e.clientX);
-        cursorY.set(e.clientY);
-      });
-      if (!isVisible) setIsVisible(true);
+    const cursor = cursorRef.current;
+    const follower = followerRef.current;
+    
+    if (!cursor || !follower) return;
+
+    // Initial position
+    gsap.set([cursor, follower], { xPercent: -50, yPercent: -50 });
+
+    const moveCursor = (e: MouseEvent) => {
+      setIsVisible(true);
+      
+      // Check for magnetic elements
+      const target = e.target as HTMLElement;
+      const magnetic = target.closest(".magnetic-target");
+      
+      if (magnetic) {
+        const rect = magnetic.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        // Push the cursor slightly towards the center of the magnetic element
+        const distX = e.clientX - centerX;
+        const distY = e.clientY - centerY;
+        
+        gsap.to(cursor, {
+          x: e.clientX - distX * 0.2,
+          y: e.clientY - distY * 0.2,
+          duration: 0.3,
+          ease: "power2.out"
+        });
+        
+        gsap.to(follower, {
+          x: centerX,
+          y: centerY,
+          scale: 2.5,
+          opacity: 0.2,
+          duration: 0.4,
+          ease: "power2.out"
+        });
+        
+        setVariant("premium");
+      } else {
+        gsap.to(cursor, {
+          x: e.clientX,
+          y: e.clientY,
+          duration: 0.1,
+          ease: "none"
+        });
+        
+        gsap.to(follower, {
+          x: e.clientX,
+          y: e.clientY,
+          scale: 1,
+          opacity: 0.5,
+          duration: 0.6,
+          ease: "power3.out"
+        });
+        
+        // Dynamic variants based on cursor data attribute
+        const interactable = target.closest("[data-cursor]");
+        if (interactable) {
+          const type = (interactable as HTMLElement).dataset.cursor as "premium" | "cta";
+          setVariant(type);
+        } else {
+          setVariant("default");
+        }
+      }
     };
 
-    const onMouseLeave = () => setIsVisible(false);
-    const onMouseEnter = () => setIsVisible(true);
+    const handleMouseLeave = () => setIsVisible(false);
+    const handleMouseEnter = () => setIsVisible(true);
 
-    window.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseleave", onMouseLeave);
-    document.addEventListener("mouseenter", onMouseEnter);
-
-    // Listen for premium element hover
-    const onHoverPremium = () => setVariant("premium");
-    const onHoverCta = () => setVariant("cta");
-    const onHoverDefault = () => setVariant("default");
-
-    const observer = new MutationObserver(() => {
-      document.querySelectorAll("[data-cursor='premium']").forEach((el) => {
-        el.addEventListener("mouseenter", onHoverPremium);
-        el.addEventListener("mouseleave", onHoverDefault);
-      });
-      document.querySelectorAll("[data-cursor='cta']").forEach((el) => {
-        el.addEventListener("mouseenter", onHoverCta);
-        el.addEventListener("mouseleave", onHoverDefault);
-      });
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // Initial scan
-    document.querySelectorAll("[data-cursor='premium']").forEach((el) => {
-      el.addEventListener("mouseenter", onHoverPremium);
-      el.addEventListener("mouseleave", onHoverDefault);
-    });
-    document.querySelectorAll("[data-cursor='cta']").forEach((el) => {
-      el.addEventListener("mouseenter", onHoverCta);
-      el.addEventListener("mouseleave", onHoverDefault);
-    });
+    window.addEventListener("mousemove", moveCursor);
+    document.addEventListener("mouseleave", handleMouseLeave);
+    document.addEventListener("mouseenter", handleMouseEnter);
 
     return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseleave", onMouseLeave);
-      document.removeEventListener("mouseenter", onMouseEnter);
-      cancelAnimationFrame(rafRef.current);
-      observer.disconnect();
+      window.removeEventListener("mousemove", moveCursor);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      document.removeEventListener("mouseenter", handleMouseEnter);
     };
-  }, [cursorX, cursorY, isVisible]);
+  }, []);
 
-  const sizes = {
-    default: 12,
-    premium: 40,
-    cta: 56,
+  const getStyle = () => {
+    switch (variant) {
+      case "cta":
+        return {
+          background: "var(--champagne)",
+          width: "80px",
+          height: "80px",
+        };
+      case "premium":
+        return {
+          background: "rgba(247, 231, 206, 0.4)",
+          width: "40px",
+          height: "40px",
+          border: "1px solid var(--champagne)",
+        };
+      default:
+        return {
+          background: "var(--pearl)",
+          width: "8px",
+          height: "8px",
+        };
+    }
   };
 
-  const size = sizes[variant];
-
   return (
-    <motion.div
-      className="pointer-events-none fixed top-0 left-0 z-[9999] mix-blend-difference hidden md:block"
-      style={{
-        x: springX,
-        y: springY,
-        translateX: "-50%",
-        translateY: "-50%",
-      }}
-      animate={{
-        width: size,
-        height: size,
-        opacity: isVisible ? 1 : 0,
-      }}
-      transition={{ type: "spring", damping: 20, stiffness: 300 }}
-    >
+    <>
       <div
-        className="w-full h-full rounded-full"
+        ref={cursorRef}
+        className="fixed top-0 left-0 z-[10000] pointer-events-none mix-blend-difference hidden md:block rounded-full transition-[width,height] duration-300 ease-out"
         style={{
-          background:
-            variant === "cta"
-              ? "radial-gradient(circle, var(--gold) 0%, transparent 70%)"
-              : variant === "premium"
-              ? "rgba(201, 169, 110, 0.4)"
-              : "var(--offwhite)",
-          border: variant !== "default" ? "1px solid var(--gold)" : "none",
+          ...getStyle(),
+          opacity: isVisible ? 1 : 0,
+        }}
+      >
+        {variant === "cta" && (
+          <div className="flex items-center justify-center w-full h-full text-[10px] font-bold text-onyx tracking-tighter">
+            DISCOVER
+          </div>
+        )}
+      </div>
+      <div
+        ref={followerRef}
+        className="fixed top-0 left-0 z-[9999] pointer-events-none hidden md:block w-12 h-12 rounded-full border border-champagne/20"
+        style={{
+          opacity: isVisible ? 0.3 : 0,
         }}
       />
-      {variant === "cta" && (
-        <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold tracking-wider text-charcoal">
-          CLICK
-        </span>
-      )}
-    </motion.div>
+    </>
   );
 }

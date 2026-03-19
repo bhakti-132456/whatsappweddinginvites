@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
   { label: "Services", href: "#services" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "Journey", href: "#onboarding" },
   { label: "Process", href: "#process" },
-  { label: "Upload", href: "#upload" },
   { label: "Preview", href: "#preview" },
+  { label: "Pricing", href: "#pricing" },
 ];
 
 export function Navbar() {
@@ -27,29 +27,28 @@ export function Navbar() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-32px)] max-w-6xl transition-all duration-500 ${
-          scrolled ? "glass-intense" : "glass"
+        className={`fixed top-8 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-48px)] max-w-6xl transition-all duration-500 rounded-full border border-pearl/5 ${
+          scrolled ? "bg-onyx/80 backdrop-blur-xl py-3" : "bg-transparent py-6"
         }`}
-        style={{ borderRadius: 20 }}
       >
-        <div className="flex items-center justify-between px-6 py-3 md:py-4 md:px-8">
+        <div className="flex items-center justify-between px-8">
           {/* Logo */}
-          <a href="#" className="flex items-center gap-2 group" data-cursor="premium">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center text-charcoal font-bold text-sm">
+          <a href="#" className="flex items-center gap-3 group" data-cursor="premium">
+            <div className="w-10 h-10 rounded-full bg-champagne flex items-center justify-center text-onyx font-serif font-bold text-lg transition-transform group-hover:rotate-12">
               W
             </div>
-            <span className="font-serif text-lg md:text-xl font-semibold text-offwhite group-hover:text-gold transition-colors">
-              WWI
+            <span className="font-serif text-xl tracking-tight text-pearl group-hover:text-champagne transition-colors">
+              Heritage
             </span>
           </a>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-10">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-offwhite/70 hover:text-gold transition-colors duration-300 tracking-wide"
+                className="text-[10px] font-bold text-pearl/40 hover:text-champagne transition-colors duration-300 tracking-[0.2em] uppercase"
                 data-cursor="premium"
               >
                 {link.label}
@@ -58,15 +57,12 @@ export function Navbar() {
           </div>
 
           {/* CTA */}
-          <a
-            href="https://wa.me/919999999999?text=Hi%2C%20I%27d%20like%20to%20order%20a%20wedding%20invite!"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:flex clay px-6 py-2.5 text-charcoal font-semibold text-sm tracking-wide hover:brightness-110"
+          <button
+            className="hidden md:flex btn-premium !py-2.5 !px-8 text-[10px] magnetic-target"
             data-cursor="cta"
           >
-            Order Now
-          </a>
+            Get Started
+          </button>
 
           {/* Mobile Menu Button */}
           <button
@@ -76,15 +72,15 @@ export function Navbar() {
           >
             <motion.div
               animate={{ rotate: mobileOpen ? 45 : 0, y: mobileOpen ? 8 : 0 }}
-              className="w-6 h-0.5 bg-offwhite rounded"
+              className="w-6 h-px bg-pearl"
             />
             <motion.div
               animate={{ opacity: mobileOpen ? 0 : 1 }}
-              className="w-6 h-0.5 bg-offwhite rounded"
+              className="w-6 h-px bg-pearl"
             />
             <motion.div
               animate={{ rotate: mobileOpen ? -45 : 0, y: mobileOpen ? -8 : 0 }}
-              className="w-6 h-0.5 bg-offwhite rounded"
+              className="w-6 h-px bg-pearl"
             />
           </button>
         </div>
@@ -94,10 +90,10 @@ export function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-charcoal/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-onyx flex flex-col items-center justify-center gap-12 md:hidden"
           >
             {navLinks.map((link, i) => (
               <motion.a
@@ -107,22 +103,11 @@ export function Navbar() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="text-2xl font-serif font-medium text-offwhite hover:text-gold transition-colors"
+                className="text-4xl font-serif text-pearl hover:text-champagne transition-colors"
               >
                 {link.label}
               </motion.a>
             ))}
-            <motion.a
-              href="https://wa.me/919999999999?text=Hi%2C%20I%27d%20like%20to%20order%20a%20wedding%20invite!"
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="clay px-8 py-3 text-charcoal font-semibold text-lg mt-4"
-            >
-              Order Now
-            </motion.a>
           </motion.div>
         )}
       </AnimatePresence>
