@@ -1,122 +1,87 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
+import { useRef, useEffect } from "react";
+import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { motion } from "framer-motion";
 
 const steps = [
   {
-    id: "01",
-    title: "The Curation",
-    copy: "Upload your assets through our secure portal. Photos, details, and the 'vibe' of your union.",
+    num: "01",
+    title: "Discovery",
+    desc: "A bespoke onboarding session to capture the soul of your celebration.",
   },
   {
-    id: "02",
-    title: "The Craft",
-    copy: "Our designers breathe life into your data, hand-coding every transition and refining every pixel.",
+    num: "02",
+    title: "Curation",
+    desc: "Our creative leads translate your story into editorial-grade visual assets.",
   },
   {
-    id: "03",
-    title: "The Reveal",
-    copy: "Receive your polished invitation. Share it instantly. Watch the RSVPs flow in.",
+    num: "03",
+    title: "Refinement",
+    desc: "Liquid motion and high-fidelity textures are layered for final brilliance.",
+  },
+  {
+    num: "04",
+    title: "Delivery",
+    desc: "Your digital heirloom is optimized and deployed via WhatsApp in 24 hours.",
   },
 ];
 
 export function Workflow() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-    
-    const section = sectionRef.current;
-    const trigger = triggerRef.current;
-    
-    if (!section || !trigger) return;
 
-    const pin = gsap.fromTo(
-      section,
-      {
-        translateX: 0,
+    if (!containerRef.current || !scrollRef.current) return;
+
+    const sections = gsap.utils.toArray(".workflow-step");
+    
+    const scrollTween = gsap.to(scrollRef.current, {
+      xPercent: -100 * (sections.length - 1),
+      ease: "none",
+      scrollTrigger: {
+        trigger: containerRef.current,
+        pin: true,
+        scrub: 1,
+        end: () => `+=${scrollRef.current?.offsetWidth}`,
+        invalidateOnRefresh: true,
       },
-      {
-        translateX: "-200vw",
-        ease: "none",
-        duration: 1,
-        scrollTrigger: {
-          trigger: trigger,
-          start: "top top",
-          end: "2000 top",
-          scrub: 0.6,
-          pin: true,
-          anticipatePin: 1,
-        },
-      }
-    );
+    });
 
     return () => {
-      pin.kill();
+      scrollTween.kill();
     };
   }, []);
 
   return (
-    <div ref={triggerRef} className="bg-onyx overflow-hidden">
-      <div className="h-screen flex items-center justify-center flex-col px-20">
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-champagne text-xs font-semibold tracking-widest uppercase mb-4"
-        >
-          The Journey
-        </motion.p>
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="heading-lg text-center"
-        >
-          From Idea to Invite
-        </motion.h2>
-        <p className="text-pearl/30 mt-4 text-sm uppercase tracking-widest animate-pulse">
-          Scroll to Explore &rarr;
-        </p>
-      </div>
+    <section ref={containerRef} id="process" className="bg-onyx-light overflow-hidden">
+      <div ref={scrollRef} className="flex h-screen items-center">
+        {/* Intro Slide */}
+        <div className="workflow-step flex-shrink-0 w-screen h-full flex items-center justify-center p-20">
+           <div className="max-w-4xl">
+              <p className="body-mono text-champagne mb-4">The Methodology</p>
+              <h2 className="heading-xl">A Systematic <br /><span className="italic">Descent into Perfection</span></h2>
+           </div>
+        </div>
 
-      <div ref={sectionRef} className="h-screen flex flex-row relative w-[300vw]">
-        {steps.map((step, index) => (
-          <div
-            key={step.id}
-            className="h-screen w-screen flex items-center justify-center px-8 lg:px-40 relative"
-          >
-            <div className="max-w-4xl w-full flex flex-col lg:flex-row items-center gap-12 lg:gap-32">
-              <div className="relative">
-                <span className="text-[12rem] lg:text-[20rem] font-serif italic text-pearl/5 leading-none">
-                  {step.id}
-                </span>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 lg:w-48 lg:h-48 rounded-full border border-champagne/20 flex items-center justify-center bg-onyx-light/50 backdrop-blur-xl">
-                    <div className="w-4 h-4 rounded-full bg-champagne animate-pulse-glow" />
-                </div>
-              </div>
-
-              <div className="flex-1 text-center lg:text-left">
-                <h3 className="heading-lg text-4xl lg:text-6xl mb-6 text-pearl">
-                  {step.title}
-                </h3>
-                <p className="text-pearl/50 text-xl lg:text-2xl font-light leading-relaxed">
-                  {step.copy}
+        {/* Step Slides */}
+        {steps.map((step) => (
+          <div key={step.num} className="workflow-step flex-shrink-0 w-screen h-full flex items-center justify-center p-20">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center max-w-7xl">
+              <span className="heading-xl text-[20vw] opacity-10 font-black">{step.num}</span>
+              <div>
+                <h3 className="heading-lg mb-8">{step.title}</h3>
+                <p className="text-pearl/40 text-xl font-light leading-relaxed max-w-md">
+                  {step.desc}
                 </p>
+                <div className="mt-12 w-20 h-1 bg-matte-gold" />
               </div>
             </div>
-
-            {/* Connecting line */}
-            {index < steps.length - 1 && (
-              <div className="hidden lg:block absolute right-[-5vw] top-1/2 -translate-y-1/2 w-[10vw] h-px bg-gradient-to-r from-champagne/20 to-transparent" />
-            )}
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

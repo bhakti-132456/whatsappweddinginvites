@@ -13,10 +13,11 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
+      smoothWheel: true,
+      wheelMultiplier: 1.1,
       touchMultiplier: 2,
     });
 
-    // Connect Lenis to ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update);
 
     gsap.ticker.add((time) => {

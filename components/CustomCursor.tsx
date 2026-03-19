@@ -1,147 +1,90 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
+import { gsap } from "gsap";
 
 export function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const followerRef = useRef<HTMLDivElement>(null);
-  const [variant, setVariant] = useState<"default" | "premium" | "cta">("default");
-  const [isVisible, setIsVisible] = useState(false);
+  const [cursorType, setCursorType] = useState<"default" | "premium" | "cta">("default");
 
   useEffect(() => {
-    if (typeof window === "undefined" || "ontouchstart" in window) return;
-
     const cursor = cursorRef.current;
-    const follower = followerRef.current;
-    
-    if (!cursor || !follower) return;
+    if (!cursor) return;
 
-    // Initial position
-    gsap.set([cursor, follower], { xPercent: -50, yPercent: -50 });
+    // Initial Hide
+    gsap.set(cursor, { opacity: 0 });
 
-    const moveCursor = (e: MouseEvent) => {
-      setIsVisible(true);
-      
-      // Check for magnetic elements
-      const target = e.target as HTMLElement;
-      const magnetic = target.closest(".magnetic-target");
-      
-      if (magnetic) {
-        const rect = magnetic.getBoundingClientRect();
+    const onMouseMove = (e: MouseEvent) => {
+      gsap.to(cursor, {
+        x: e.clientX,
+        y: e.clientY,
+        opacity: 1,
+        duration: 0.5,
+        ease: "power3.out",
+      });
+
+      // Magnetic Snapping Logic
+      const targets = document.querySelectorAll("[data-cursor='cta'], .btn-premium, .btn-premium-outline");
+      targets.forEach((target) => {
+        const rect = target.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
-        
-        // Push the cursor slightly towards the center of the magnetic element
-        const distX = e.clientX - centerX;
-        const distY = e.clientY - centerY;
-        
-        gsap.to(cursor, {
-          x: e.clientX - distX * 0.2,
-          y: e.clientY - distY * 0.2,
-          duration: 0.3,
-          ease: "power2.out"
-        });
-        
-        gsap.to(follower, {
-          x: centerX,
-          y: centerY,
-          scale: 2.5,
-          opacity: 0.2,
-          duration: 0.4,
-          ease: "power2.out"
-        });
-        
-        setVariant("premium");
-      } else {
-        gsap.to(cursor, {
-          x: e.clientX,
-          y: e.clientY,
-          duration: 0.1,
-          ease: "none"
-        });
-        
-        gsap.to(follower, {
-          x: e.clientX,
-          y: e.clientY,
-          scale: 1,
-          opacity: 0.5,
-          duration: 0.6,
-          ease: "power3.out"
-        });
-        
-        // Dynamic variants based on cursor data attribute
-        const interactable = target.closest("[data-cursor]");
-        if (interactable) {
-          const type = (interactable as HTMLElement).dataset.cursor as "premium" | "cta";
-          setVariant(type);
+        const dx = e.clientX - centerX;
+        const dy = e.clientY - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 120) {
+          // Snap button toward cursor
+          gsap.to(target, {
+            x: dx * 0.2, // Snap force (0.2x distance)
+            y: dy * 0.2,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+          // Expand cursor
+          gsap.to(cursor, { scale: 3, duration: 0.3 });
+          setCursorType("cta");
         } else {
-          setVariant("default");
+          // Reset button
+          gsap.to(target, {
+            x: 0,
+            y: 0,
+            duration: 0.6,
+            ease: "elastic.out(1, 0.3)",
+          });
+          // Reset cursor
+          if (distance > 200) {
+             gsap.to(cursor, { scale: 1, duration: 0.3 });
+             setCursorType("default");
+          }
         }
-      }
+      });
     };
 
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseEnter = () => setIsVisible(true);
+    const onMouseEnter = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-cursor='premium']")) setCursorType("premium");
+    };
 
-    window.addEventListener("mousemove", moveCursor);
-    document.addEventListener("mouseleave", handleMouseLeave);
-    document.addEventListener("mouseenter", handleMouseEnter);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseover", onMouseEnter);
 
     return () => {
-      window.removeEventListener("mousemove", moveCursor);
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      document.removeEventListener("mouseenter", handleMouseEnter);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseover", onMouseEnter);
     };
   }, []);
 
-  const getStyle = () => {
-    switch (variant) {
-      case "cta":
-        return {
-          background: "var(--champagne)",
-          width: "80px",
-          height: "80px",
-        };
-      case "premium":
-        return {
-          background: "rgba(247, 231, 206, 0.4)",
-          width: "40px",
-          height: "40px",
-          border: "1px solid var(--champagne)",
-        };
-      default:
-        return {
-          background: "var(--pearl)",
-          width: "8px",
-          height: "8px",
-        };
-    }
-  };
-
   return (
-    <>
-      <div
-        ref={cursorRef}
-        className="fixed top-0 left-0 z-[10000] pointer-events-none mix-blend-difference hidden md:block rounded-full transition-[width,height] duration-300 ease-out"
-        style={{
-          ...getStyle(),
-          opacity: isVisible ? 1 : 0,
-        }}
-      >
-        {variant === "cta" && (
-          <div className="flex items-center justify-center w-full h-full text-[10px] font-bold text-onyx tracking-tighter">
-            DISCOVER
-          </div>
-        )}
-      </div>
-      <div
-        ref={followerRef}
-        className="fixed top-0 left-0 z-[9999] pointer-events-none hidden md:block w-12 h-12 rounded-full border border-champagne/20"
-        style={{
-          opacity: isVisible ? 0.3 : 0,
-        }}
-      />
-    </>
+    <div
+      ref={cursorRef}
+      className={`fixed top-0 left-0 w-4 h-4 rounded-full pointer-events-none z-[10000] mix-blend-difference flex items-center justify-center -translate-x-1/2 -translate-y-1/2 transition-colors duration-500 bg-pearl ${
+          cursorType === "premium" ? "scale-[4]" : cursorType === "cta" ? "scale-[3]" : ""
+      }`}
+    >
+       {cursorType === "premium" && (
+          <div className="w-1 h-1 rounded-full bg-onyx animate-ping" />
+       )}
+    </div>
   );
 }
