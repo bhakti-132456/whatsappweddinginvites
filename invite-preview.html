@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Invite Live Preview</title>
+    <style>
+        /* UI DESIGN SYSTEM */
+        :root {
+            --ui-bg: #FAFAF8;
+            --ui-panel: #FFFFFF;
+            --ui-border: #E8E8E1;
+            --ui-text-muted: #888880;
+            --ui-text-main: #333330;
+            --ui-accent: #C5A059;
+            --ui-radius: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--ui-bg);
+            color: var(--ui-text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            display: flex;
+            width: 100%;
+            max-width: 960px;
+            gap: 40px;
+            padding: 40px 20px;
+        }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column-reverse; padding: 20px; gap: 30px; }
+        }
+
+        /* LEFT COLUMN: CONTROLS */
+        .controls-panel {
+            flex: 1;
+            background: var(--ui-panel);
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid var(--ui-border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            height: fit-content;
+        }
+
+        .section-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--ui-text-muted);
+            margin-bottom: 20px;
+            font-weight: 700;
+            display: block;
+            border-bottom: 1px solid var(--ui-border);
+            padding-bottom: 8px;
+        }
+
+        .input-group { margin-bottom: 24px; }
+        .input-label { font-size: 12px; margin-bottom: 8px; display: block; color: var(--ui-text-main); }
+        
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            height: 40px;
+            border: 1px solid var(--ui-border);
+            border-radius: var(--ui-radius);
+            padding: 0 12px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        textarea { height: 80px; padding: 12px; }
+        input:focus { border-color: var(--ui-accent); }
+
+        /* Template Picker */
+        .template-grid {
+            display: grid;
+            grid-cols: 2;
+            gap: 12px;
+            grid-template-columns: repeat(2, 1fr);
+            margin-bottom: 24px;
+        }
+        .template-card {
+            border: 1px solid var(--ui-border);
+            border-radius: var(--ui-radius);
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .template-card.active { border-color: var(--ui-accent); background: #FDFBF7; }
+        .template-card span { font-size: 11px; font-weight: 600; display: block; margin-top: 8px; }
+        .template-card svg { width: 24px; height: 24px; fill: var(--ui-text-muted); }
+        .template-card.active svg { fill: var(--ui-accent); }
+
+        /* Theme Picker */
+        .theme-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .theme-swatch {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .theme-swatch.active {
+            border-color: white;
+            box-shadow: 0 0 0 1px var(--ui-accent), 0 4px 8px rgba(0,0,0,0.1);
+            transform: scale(1.1);
+        }
+
+        /* File Upload Styling */
+        .file-upload-box {
+            border: 1px dashed var(--ui-border);
+            border-radius: var(--ui-radius);
+            padding: 16px;
+            position: relative;
+            background: #FAFAFA;
+        }
+        .file-upload-box input { opacity: 0; position: absolute; inset: 0; cursor: pointer; }
+        .file-info { font-size: 11px; color: var(--ui-text-muted); }
+        .remove-btn {
+            font-size: 10px; color: #ff4444; border: none; background: none; cursor: pointer; 
+            margin-top: 8px; display: block; font-weight: 600;
+        }
+
+        /* RIGHT COLUMN: PREVIEW */
+        .preview-column {
+            flex: 1;
+            position: sticky;
+            top: 40px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .preview-viewport {
+            width: 100%;
+            background: #fff;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            background: #eee;
+        }
+
+        #scaler {
+            width: 360px;
+            height: 640px;
+            background: white;
+            position: absolute;
+            top: 0; left: 0;
+            overflow: hidden;
+        }
+
+        .video-badge {
+            position: absolute;
+            top: 12px; right: 12px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            font-size: 8px;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.1em;
+            z-index: 100;
+            backdrop-filter: blur(4px);
+        }
+
+        /* TEMPLATE STYLES */
+        .invite-root {
+            width: 360px;
+            height: 640px;
+            background: var(--bg);
+            color: var(--body);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        /* Floral Template */
+        .floral-ornament {
+            position: absolute; font-size: 90px; opacity: 0.18; color: var(--accent);
+            pointer-events: none; line-height: 1;
+        }
+        .floral-t-l { top: 0; left: 0; transform: rotate(0deg); }
+        .floral-t-r { top: 0; right: 0; transform: rotate(90deg); }
+        .floral-b-l { bottom: 0; left: 0; transform: rotate(-90deg); }
+        .floral-b-r { bottom: 0; right: 0; transform: rotate(180deg); }
+        
+        .photo-circle { 
+            width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--accent);
+            object-fit: cover; margin-bottom: 20px;
+        }
+
+        /* Minimal Template */
+        .minimal-bar { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--accent); }
+        .minimal-line { position: absolute; left: 40px; top: 0; width: 1px; height: 100%; background: var(--accent); opacity: 0.15; }
+        .minimal-year { 
+            position: absolute; bottom: 80px; right: -20px; font-size: 130px; 
+            font-weight: 800; opacity: 0.05; color: var(--accent); transform: rotate(-90deg);
+        }
+        .minimal-content { 
+            position: absolute; bottom: 40px; left: 60px; text-align: left; align-items: flex-start;
+            display: flex; flex-direction: column;
+        }
+
+        /* Royal Template */
+        .royal-border-1 { position: absolute; inset: 14px; border: 1px solid var(--accent); opacity: 0.3; pointer-events: none; }
+        .royal-border-2 { position: absolute; inset: 20px; border: 1px solid var(--accent); opacity: 0.15; pointer-events: none; }
+        .photo-rect { 
+            width: 140px; height: 100px; border: 3px double var(--accent);
+            object-fit: cover; margin-bottom: 12px;
+        }
+
+        /* Modern Template */
+        .modern-hero {
+            position: absolute; top: 0; left: 0; width: 100%; height: 55%;
+            background: var(--accent); clip-path: ellipse(65% 100% at 50% 0%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; overflow: hidden;
+        }
+        .modern-hero-bottom {
+            clip-path: ellipse(55% 100% at 50% 100%);
+            height: 55%; bottom: auto; top: 0;
+        }
+        .modern-hero-overlay { position: absolute; inset: 0; background: black; opacity: 0; }
+        .modern-hero-img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+        .modern-body { margin-top: 360px; padding: 20px; }
+        .rsvp-pill { 
+            display: inline-block; margin-top: 20px; padding: 10px 30px; 
+            border: 1px solid var(--accent); color: var(--accent); 
+            border-radius: 100px; font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- CONTROLS -->
+        <div class="controls-panel">
+            <span class="section-label">General Details</span>
+            <div class="input-group">
+                <label class="input-label">Bride's Name</label>
+                <input type="text" id="name1" value="Priya">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Groom's Name</label>
+                <input type="text" id="name2" value="Arjun">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Wedding Date</label>
+                <input type="date" id="date" value="2025-12-28">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Venue</label>
+                <input type="text" id="venue" value="The Grand Palace, Jaipur">
+            </div>
+
+            <span class="section-label">Secondary Event</span>
+            <div class="input-group">
+                <label class="input-label">Event Name (e.g. Mehendi)</label>
+                <input type="text" id="event2Name" placeholder="Second Event Name">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Event Date</label>
+                <input type="date" id="event2Date">
+            </div>
+
+            <span class="section-label">Template Design</span>
+            <div class="template-grid">
+                <div class="template-card active" data-id="floral">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                    <span>Floral</span>
+                </div>
+                <div class="template-card" data-id="minimal">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V5h14v14z"/></svg>
+                    <span>Minimal</span>
+                </div>
+                <div class="template-card" data-id="royal">
+                    <svg viewBox="0 0 24 24"><path d="M5 16L3 5l3.5 1.5L12 2l5.5 4.5L21 5l-2 11H5zm14 3c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2H19z"/></svg>
+                    <span>Royal</span>
+                </div>
+                <div class="template-card" data-id="modern">
+                    <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM3 19V5h18v14H3z"/></svg>
+                    <span>Modern</span>
+                </div>
+            </div>
+
+            <span class="section-label">Color Theme</span>
+            <div class="theme-grid" id="themeGrid"></div>
+
+            <span class="section-label">Photo Upload</span>
+            <div class="input-group">
+                <div class="file-upload-box">
+                    <span class="file-info" id="photoInfo">Select couple's photo</span>
+                    <input type="file" id="photoInput" accept="image/*">
+                </div>
+                <button id="removePhoto" class="remove-btn" style="display:none">Remove photo</button>
+            </div>
+
+            <span class="section-label">Video Background</span>
+            <div class="input-group">
+                <div class="file-upload-box">
+                    <span class="file-info" id="videoInfo">Select background video (WebM/MP4)</span>
+                    <input type="file" id="videoInput" accept="video/mp4,video/webm">
+                </div>
+                <button id="removeVideo" class="remove-btn" style="display:none">Remove video</button>
+            </div>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="preview-column">
+            <div class="preview-viewport" id="viewport">
+                <div id="scaler"></div>
+            </div>
+            <div style="font-size: 11px; color: var(--ui-text-muted); margin-top: 20px; font-weight: 500;">LIVE PREVIEW (9:16)</div>
+        </div>
+    </div>
+
+    <script>
+        // APP STATE
+        const state = {
+            name1: 'Priya',
+            name2: 'Arjun',
+            date: '2025-12-28',
+            venue: 'The Grand Palace, Jaipur',
+            event2Name: '',
+            event2Date: '',
+            template: 'floral',
+            theme: 'rose',
+            photoUrl: null,
+            videoUrl: null,
+        };
+
+        // THEMES
+        const themes = {
+            rose: { bg: '#FFF5F5', accent: '#C9786A', heading: '#3D1F1A', body: '#8A5550' },
+            marigold: { bg: '#FFFBF0', accent: '#C88B2C', heading: '#3D2A0A', body: '#8A6A30' },
+            royal: { bg: '#F5F0FF', accent: '#6B4FA8', heading: '#1E1040', body: '#5A4880' },
+            sage: { bg: '#F2F7F2', accent: '#4A7C5C', heading: '#1A3024', body: '#4A6858' },
+            midnight: { bg: '#1A1A2E', accent: '#E8C97B', heading: '#F5F0E8', body: '#A89870' },
+            blush: { bg: '#FFF0F5', accent: '#D4789A', heading: '#3D1A2A', body: '#8A5068' },
+            slate: { bg: '#F0F4F8', accent: '#3D5A80', heading: '#1A2840', body: '#4A6080' },
+            copper: { bg: '#FDF6EE', accent: '#A0522D', heading: '#3D1E0A', body: '#7A4828' }
+        };
+
+        // UTILS
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr + 'T00:00:00');
+            return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        function getStyle(themeKey) {
+            const t = themes[themeKey];
+            return `style="--bg:${t.bg}; --accent:${t.accent}; --heading:${t.heading}; --body:${t.body}"`;
+        }
+
+        // TEMPLATES
+        const templates = {
+            floral: (s) => `
+                <div class="invite-root" ${getStyle(s.theme)} style="font-family: Georgia, serif; background: var(--bg);">
+                    <div class="floral-ornament floral-t-l">❧</div><div class="floral-ornament floral-t-r">❧</div>
+                    <div class="floral-ornament floral-b-l">❧</div><div class="floral-ornament floral-b-r">❧</div>
+                    
+                    <p style="font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px;">Together with their families</p>
+                    
+                    ${s.photoUrl ? `<img src="${s.photoUrl}" class="photo-circle">` : ''}
+                    
+                    <h1 style="font-size: 28px; color: var(--heading); margin-bottom: 5px;">${s.name1}</h1>
+                    <div style="font-size: 50px; color: var(--accent); opacity: 0.3; line-height: 0.8;">&</div>
+                    <h1 style="font-size: 28px; color: var(--heading); margin-top: 5px; margin-bottom: 24px;">${s.name2}</h1>
+                    
+                    <div style="width: 60px; height: 1px; background: var(--accent); opacity: 0.5; margin: 0 auto 24px;"></div>
+                    
+                    <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--body); margin-bottom: 12px;">Request the pleasure of your company</p>
+                    <p style="font-size: 20px; color: var(--heading); margin-bottom: 8px;">${formatDate(s.date)}</p>
+                    <p style="font-size: 12px; color: var(--body); opacity: 0.8; max-width: 240px;">${s.venue}</p>
+                    
+                    ${(s.event2Name && s.event2Date) ? `
+                        <div style="margin-top: 30px; border-top: 1px solid var(--accent); opacity: 0.3; width: 40px; margin: 30px auto 15px;"></div>
+                        <p style="font-size: 10px; color: var(--accent); font-weight: bold; margin-bottom: 4px;">${s.event2Name}</p>
+                        <p style="font-size: 12px; color: var(--body);">${formatDate(s.event2Date)}</p>
+                    ` : ''}
+                </div>
+            `,
+            minimal: (s) => `
+                <div class="invite-root" ${getStyle(s.theme)} style="font-family: sans-serif; background: var(--bg); text-align: left; padding: 0;">
+                    ${s.photoUrl ? `
+                        <img src="${s.photoUrl}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+                        <div style="position:absolute; inset:0; background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8));"></div>
+                    ` : ''}
+                    <div class="minimal-bar"></div>
+                    <div class="minimal-line"></div>
+                    <div class="minimal-year">${new Date(s.date).getFullYear() || '2025'}</div>
+                    
+                    <div class="minimal-content" style="${s.photoUrl ? 'color:white;' : ''}">
+                        <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 15px;">You are invited</p>
+                        <h1 style="font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 24px; color: ${s.photoUrl ? 'white' : 'var(--heading)'}">
+                            ${s.name1}<br>& ${s.name2}
+                        </h1>
+                        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;">
+                            <span style="width: 4px; height: 4px; background: var(--accent); border-radius: 50%;"></span>
+                            <span>${formatDate(s.date)}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; opacity: 0.7; margin-top: 8px;">
+                            <span style="width: 4px; height: 4px; background: var(--accent); border-radius: 50%;"></span>
+                            <span>${s.venue}</span>
+                        </div>
+
+                         ${(s.event2Name && s.event2Date) ? `
+                            <div style="margin-top: 20px; font-size: 10px; font-weight: bold; color: var(--accent);">${s.event2Name} • ${formatDate(s.event2Date)}</div>
+                        ` : ''}
+                    </div>
+                </div>
+            `,
+            royal: (s) => `
+                <div class="invite-root" ${getStyle(s.theme)} style="font-family: Georgia, serif; background: var(--bg);">
+                    <div class="royal-border-1"></div><div class="royal-border-2"></div>
+                    <div style="font-size: 32px; color: var(--accent); opacity: 0.5; margin-bottom: 12px;">♛</div>
+                    
+                    ${s.photoUrl ? `<img src="${s.photoUrl}" class="photo-rect">` : ''}
+                    
+                    <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--body); opacity: 0.7; margin-bottom: 15px;">Together with their families</p>
+                    
+                    <h1 style="font-size: 26px; color: var(--heading); margin-bottom: 6px;">${s.name1}</h1>
+                    <div style="font-size: 14px; font-weight: bold; color: var(--accent); letter-spacing: 2px;">— & —</div>
+                    <h1 style="font-size: 26px; color: var(--heading); margin-top: 6px; margin-bottom: 20px;">${s.name2}</h1>
+                    
+                    <div style="color: var(--accent); opacity: 0.4; margin-bottom: 20px;">✦ ✦ ✦</div>
+                    
+                    <p style="font-size: 10px; color: var(--body); margin-bottom: 4px;">Joyfully invite you to celebrate their</p>
+                    <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.25em; color: var(--accent); font-weight: bold; margin-bottom: 15px;">Wedding</p>
+                    
+                    <p style="font-size: 18px; color: var(--heading); margin-bottom: 6px;">${formatDate(s.date)}</p>
+                    <p style="font-size: 12px; color: var(--body);">${s.venue}</p>
+
+                     ${(s.event2Name && s.event2Date) ? `
+                        <div style="margin-top: 25px; font-size: 11px;">
+                            <span style="color: var(--accent); font-weight: bold;">${s.event2Name}</span><br>
+                            <span style="opacity: 0.6;">${formatDate(s.event2Date)}</span>
+                        </div>
+                    ` : ''}
+                </div>
+            `,
+            modern: (s) => `
+                <div class="invite-root" ${getStyle(s.theme)} style="font-family: sans-serif; background: white; padding: 0;">
+                    ${s.videoUrl ? '<div class="video-badge">VIDEO INVITE</div>' : ''}
+                    
+                    <div class="modern-hero modern-hero-bottom">
+                         ${s.videoUrl ? `
+                            <video src="${s.videoUrl}" autoplay muted loop playsinline style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"></video>
+                            <div style="position:absolute; inset:0; background: var(--accent); opacity: 0.4;"></div>
+                         ` : s.photoUrl ? `
+                            <img src="${s.photoUrl}" class="modern-hero-img">
+                            <div style="position:absolute; inset:0; background: black; opacity: 0.5;"></div>
+                         ` : ''}
+                         
+                         <div style="position:relative; z-index: 5;">
+                             <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 12px; opacity: 0.9;">Wedding Invitation</p>
+                             <h1 style="font-size: 32px; font-weight: 300; margin-bottom: 5px;">${s.name1}</h1>
+                             <div style="font-size: 14px; opacity: 0.6; margin: 4px 0;">— & —</div>
+                             <h1 style="font-size: 32px; font-weight: 300;">${s.name2}</h1>
+                         </div>
+                    </div>
+
+                    <div class="modern-body">
+                         <p style="font-size: 10px; text-transform: uppercase; color: var(--accent); font-weight: 800; letter-spacing: 0.2em; margin-bottom: 12px;">Join us on</p>
+                         <p style="font-size: 22px; font-weight: 800; color: var(--heading); margin-bottom: 15px;">${formatDate(s.date)}</p>
+                         
+                         <div style="width: 40px; height: 1px; background: var(--accent); opacity: 0.2; margin: 0 auto 20px;"></div>
+                         
+                         <p style="font-size: 12px; color: var(--body); opacity: 0.7; margin-bottom: 24px;">${s.venue}</p>
+
+                         ${(s.event2Name && s.event2Date) ? `
+                            <div style="margin-bottom: 20px; font-size: 10px; background: var(--bg); display: inline-block; padding: 4px 12px; border-radius: 4px;">
+                                <span style="font-weight: 800; color: var(--accent);">${s.event2Name}</span> • ${formatDate(s.event2Date)}
+                            </div>
+                        ` : ''}
+                         
+                         <br>
+                         <div class="rsvp-pill">RSVP Online</div>
+                    </div>
+                </div>
+            `
+        };
+
+        // ENGINE
+        function scalePreview() {
+            const viewport = document.getElementById('viewport');
+            const scaler = document.getElementById('scaler');
+            const scale = viewport.clientWidth / 360;
+            scaler.style.transform = `scale(${scale})`;
+            scaler.style.transformOrigin = 'top left';
+            viewport.style.height = (640 * scale) + 'px';
+        }
+
+        function render() {
+            document.getElementById('scaler').innerHTML = templates[state.template](state);
+            scalePreview();
+        }
+
+        // INITIALIZE UI
+        function initUI() {
+            // Render Theme Picker
+            const themeGrid = document.getElementById('themeGrid');
+            Object.keys(themes).forEach(key => {
+                const swatch = document.createElement('div');
+                swatch.className = `theme-swatch ${state.theme === key ? 'active' : ''}`;
+                swatch.style.background = themes[key].bg;
+                swatch.style.background = `linear-gradient(135deg, ${themes[key].bg} 50%, ${themes[key].accent} 50%)`;
+                swatch.onclick = () => {
+                   state.theme = key;
+                   document.querySelectorAll('.theme-swatch').forEach(s => s.classList.remove('active'));
+                   swatch.classList.add('active');
+                   render();
+                }
+                themeGrid.appendChild(swatch);
+            });
+
+            // Bind Inputs
+            const inputs = ['name1', 'name2', 'date', 'venue', 'event2Name', 'event2Date'];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', (e) => {
+                    state[id] = e.target.value;
+                    render();
+                });
+            });
+
+            // Template Picker
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.onclick = () => {
+                    state.template = card.dataset.id;
+                    document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    render();
+                }
+            });
+
+            // Photo Upload
+            document.getElementById('photoInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    state.photoUrl = e.target.result;
+                    document.getElementById('photoInfo').innerText = file.name;
+                    document.getElementById('removePhoto').style.display = 'block';
+                    render();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            document.getElementById('removePhoto').onclick = () => {
+                state.photoUrl = null;
+                document.getElementById('photoInput').value = '';
+                document.getElementById('photoInfo').innerText = 'Select couple\'s photo';
+                document.getElementById('removePhoto').style.display = 'none';
+                render();
+            };
+
+            // Video Upload
+            document.getElementById('videoInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const url = URL.createObjectURL(file);
+                state.videoUrl = url;
+                document.getElementById('videoInfo').innerText = file.name;
+                document.getElementById('removeVideo').style.display = 'block';
+                render();
+            });
+
+            document.getElementById('removeVideo').onclick = () => {
+                state.videoUrl = null;
+                document.getElementById('videoInput').value = '';
+                document.getElementById('videoInfo').innerText = 'Select background video (WebM/MP4)';
+                document.getElementById('removeVideo').style.display = 'none';
+                render();
+            };
+
+            window.addEventListener('resize', scalePreview);
+            render();
+        }
+
+        initUI();
+    </script>
+</body>
+</html>

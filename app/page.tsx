@@ -8,6 +8,7 @@ import { Pricing } from "@/components/Pricing";
 import { Workflow } from "@/components/Workflow";
 import { Footer } from "@/components/Footer";
 import { BespokeOnboarding } from "@/components/BespokeOnboarding";
+import { InvitePreview } from "@/components/InvitePreview";
 import PhonePreview from "@/components/PhonePreview";
 
 export default function Home() {
@@ -34,6 +35,7 @@ export default function Home() {
         <div className="relative z-20 bg-imperial-maroon shadow-[0_0_100px_rgba(0,0,0,0.5)]">
            <TrinityGrid />
            <Workflow />
+           <InvitePreview />
            <Pricing />
            <BespokeOnboarding />
            <section id="preview" className="bg-maroon/20 flex flex-col items-center py-60 border-t border-antique-gold/5">
