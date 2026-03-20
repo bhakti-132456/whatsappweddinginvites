@@ -89,7 +89,7 @@ export function HeroScrub() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative h-[500vh] bg-imperial-maroon overflow-visible">
+    <div ref={containerRef} className="relative h-[250vh] bg-imperial-maroon overflow-visible">
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
         
         {/* The Cinematic Scrub Video */}

@@ -57,7 +57,7 @@ export function TrinityGrid() {
   }, []);
 
   return (
-    <section className="py-60 px-4 md:px-20 bg-imperial-maroon relative overflow-hidden">
+    <section className="pt-0 pb-32 px-4 md:px-20 bg-imperial-maroon relative overflow-hidden">
       <div ref={containerRef} className="max-w-7xl mx-auto relative z-10">
         <div className="mb-40 max-w-2xl">
            <p className="body-serif text-antique-gold mb-6 uppercase tracking-[0.4em] text-[10px]">Strategic Artistry</p>
