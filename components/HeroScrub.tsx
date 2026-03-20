@@ -19,12 +19,17 @@ export function HeroScrub() {
   const currentTime = useRef(0);
   const rafId = useRef<number>(0);
 
-  const [videoSrc, setVideoSrc] = useState("/web-hero-scrub.mp4");
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
 
   useEffect(() => {
     // Media Query for video source
-    const isMobile = window.innerWidth < 768;
-    setVideoSrc(isMobile ? "/mobile-hero-scrub.mp4" : "/web-hero-scrub.mp4");
+    const updateVideoSrc = () => {
+      const isMobile = window.innerWidth < 768;
+      setVideoSrc(isMobile ? "/mobile-hero-scrub.mp4" : "/web-hero-scrub.mp4");
+    };
+
+    updateVideoSrc();
+    window.addEventListener("resize", updateVideoSrc);
 
     const video = videoRef.current;
     const container = containerRef.current;
@@ -77,6 +82,7 @@ export function HeroScrub() {
 
     return () => {
       if (rafId.current) cancelAnimationFrame(rafId.current);
+      window.removeEventListener("resize", updateVideoSrc);
       tl.kill();
       ScrollTrigger.getAll().forEach(st => st.kill());
     };
@@ -89,7 +95,7 @@ export function HeroScrub() {
         {/* The Cinematic Scrub Video */}
         <video
           ref={videoRef}
-          src={videoSrc}
+          src={videoSrc || "/web-hero-scrub.mp4"}
           muted
           playsInline
           loop
@@ -101,8 +107,8 @@ export function HeroScrub() {
         <div ref={overlayRef} className="absolute inset-0 z-10 bg-gradient-to-t from-imperial-maroon via-transparent to-imperial-maroon/40" />
 
         {/* Decorative Elements */}
-        <div ref={mandalaRef} className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none opacity-[0.1]">
-           <Mandala className="w-[120vw] text-antique-gold" />
+        <div ref={mandalaRef} className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none opacity-[0.1] overflow-hidden">
+           <Mandala className="w-[150vw] md:w-[120vw] h-auto text-antique-gold shrink-0" />
         </div>
 
         {/* Invitation Content */}
@@ -117,10 +123,10 @@ export function HeroScrub() {
           </motion.div>
           
           <div ref={headlineRef} className="space-y-4">
-            <h1 className="heading-invite text-[clamp(4rem,20vw,14rem)] leading-[0.6] text-off-white drop-shadow-[0_0_30px_rgba(212,175,55,0.4)]">
+            <h1 className="heading-invite text-[clamp(3rem,18vw,14rem)] leading-[0.8] md:leading-[0.6] text-off-white drop-shadow-[0_0_30px_rgba(212,175,55,0.4)]">
               Heritage
             </h1>
-            <p className="heading-serif text-[clamp(1.5rem,5vw,2.5rem)] text-antique-gold italic tracking-wider">
+            <p className="heading-serif text-[clamp(1.1rem,4vw,2.5rem)] text-antique-gold italic tracking-wider px-4">
               Digitized for the Modern Era
             </p>
           </div>

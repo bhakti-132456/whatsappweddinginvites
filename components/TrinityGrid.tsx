@@ -91,8 +91,8 @@ export function TrinityGrid() {
       </div>
       
       {/* Decorative Parallax Backdrop */}
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 -z-0 opacity-[0.03] pointer-events-none select-none">
-         <span className="heading-invite text-[25vw] text-antique-gold whitespace-nowrap">Invitation Artistry</span>
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 -z-0 opacity-[0.02] pointer-events-none select-none overflow-hidden w-full">
+         <span className="heading-invite text-[40vw] md:text-[25vw] text-antique-gold whitespace-nowrap block text-center">Invitation Artistry</span>
       </div>
     </section>
   );

@@ -56,7 +56,7 @@ export default function RootLayout({
         <Preloader />
         <CustomCursor />
         <SmoothScroll>
-          <div className="relative overflow-visible">
+          <div className="relative overflow-x-hidden w-full max-w-full">
             {children}
           </div>
         </SmoothScroll>

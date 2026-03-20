@@ -92,10 +92,10 @@ export function Workflow() {
       </div>
 
       {/* Horizontal Track */}
-      <div ref={scrollRef} className="flex h-screen w-max items-center px-[20vw] gap-[15vw] relative z-10">
+      <div ref={scrollRef} className="flex h-screen w-max items-center px-[5vw] md:px-[20vw] gap-[10vw] md:gap-[15vw] relative z-10">
         {steps.map((step, i) => (
-          <div key={i} className="journey-step w-[450px] flex-shrink-0 group">
-            <div className="glass-maroon p-12 rounded-[40px] border border-antique-gold/10 group-hover:border-antique-gold/30 transition-all duration-700">
+          <div key={i} className="journey-step w-[85vw] md:w-[450px] flex-shrink-0 group">
+            <div className="glass-maroon p-8 md:p-12 rounded-[40px] border border-antique-gold/10 group-hover:border-antique-gold/30 transition-all duration-700">
               <span className="body-serif text-antique-gold/50 mb-8 block text-[10px] uppercase tracking-widest">{step.tag}</span>
               <h3 className="heading-invite text-5xl mb-6 text-off-white group-hover:tracking-wider transition-all duration-700">{step.title}</h3>
               <p className="body-serif text-off-white/60 leading-relaxed tracking-normal text-sm">{step.desc}</p>

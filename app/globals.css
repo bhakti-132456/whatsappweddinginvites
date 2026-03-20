@@ -22,7 +22,9 @@
     background-color: var(--color-imperial-maroon);
     color: var(--color-off-white);
     font-family: var(--font-cormorant), serif;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
+    width: 100%;
+    position: relative;
     -webkit-font-smoothing: antialiased;
   }
 

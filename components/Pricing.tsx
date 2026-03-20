@@ -55,18 +55,20 @@ const tiers = [
 
 export function Pricing() {
   return (
-    <section id="pricing" className="relative section-padding bg-onyx-light">
+    <section id="pricing" className="relative py-40 px-4 md:px-20 bg-imperial-maroon border-t border-antique-gold/5">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-24">
+        <div className="mb-24">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            className="text-champagne text-xs font-semibold tracking-widest uppercase mb-4"
+            className="body-serif text-antique-gold/60 text-xs uppercase tracking-[0.4em] mb-4"
           >
             Investment
           </motion.p>
-          <h2 className="heading-lg">Select Your Tier</h2>
+          <h2 className="heading-invite text-[clamp(3rem,6vw,5rem)] text-off-white">
+            Select Your <span className="heading-serif italic text-antique-gold font-light">Heritage Tier.</span>
+          </h2>
         </div>
 
         {/* Pricing Cards */}
@@ -78,42 +80,42 @@ export function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: i * 0.1 }}
-              className={`group relative p-10 flex flex-col border border-antique-gold/10 rounded-[40px] bg-maroon/20 hover:bg-maroon/40 backdrop-blur-sm transition-all duration-500 hover:border-antique-gold/40 ${
-                tier.popular ? "shadow-[0_0_50px_rgba(212,175,55,0.05)]" : ""
+              className={`group relative p-8 md:p-12 flex flex-col border border-antique-gold/10 rounded-[40px] bg-maroon/10 hover:bg-maroon/30 backdrop-blur-md transition-all duration-700 hover:border-antique-gold/40 ${
+                tier.popular ? "shadow-[0_0_50px_rgba(212,175,55,0.05)] border-antique-gold/20" : ""
               }`}
               data-cursor="premium"
             >
               {tier.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-champagne text-onyx text-[10px] font-bold tracking-widest uppercase rounded-full">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-antique-gold text-imperial-maroon text-[10px] font-bold tracking-widest uppercase rounded-full">
                   Most Requested
                 </div>
               )}
 
               <div className="mb-10">
-                <p className="text-antique-gold/40 text-[10px] uppercase tracking-widest mb-1">{tier.subtitle}</p>
-                <h3 className="heading-invite text-4xl text-off-white">{tier.name}</h3>
+                <p className="body-serif text-antique-gold/40 text-[10px] uppercase tracking-widest mb-1">{tier.subtitle}</p>
+                <h3 className="heading-invite text-4xl text-off-white group-hover:text-antique-gold transition-colors duration-500">{tier.name}</h3>
               </div>
 
               <div className="mb-8">
-                <span className="heading-lg text-4xl text-champagne">{tier.price}</span>
-                {tier.price !== "Custom" && <span className="text-pearl/20 text-xs ml-2">/ creation</span>}
+                <span className="heading-serif italic text-4xl text-antique-gold">{tier.price}</span>
+                {tier.price !== "Custom" && <span className="body-serif text-off-white/20 text-xs ml-2">/ creation</span>}
               </div>
 
-              <p className="text-pearl/50 text-sm mb-10 leading-relaxed min-h-[3rem]">
+              <p className="body-serif text-off-white/50 text-sm mb-10 leading-relaxed min-h-[3rem]">
                 {tier.description}
               </p>
 
               <ul className="space-y-4 mb-12 flex-1">
                 {tier.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3 text-xs text-pearl/40">
-                    <div className="w-1.5 h-1.5 rounded-full bg-champagne/40 mt-1" />
+                  <li key={feature} className="flex items-start gap-3 text-xs body-serif text-off-white/40">
+                    <div className="w-1 h-1 rounded-full bg-antique-gold/40 mt-1.5" />
                     {feature}
                   </li>
                 ))}
               </ul>
 
               <button 
-                className={`w-full ${tier.popular ? "btn-premium" : "btn-premium-outline"} !py-4 transition-transform active:scale-95`}
+                className="btn-gold w-full text-center"
                 data-cursor="cta"
               >
                 {tier.cta}
