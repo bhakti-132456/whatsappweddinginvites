@@ -3,6 +3,7 @@
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Mandala } from "./Mandala";
 
 const steps = [
   {
@@ -70,8 +71,15 @@ export function Workflow() {
 
   return (
     <section ref={containerRef} className="relative overflow-hidden bg-imperial-maroon">
+      {/* Subtle Background Life */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
+        <Mandala className="absolute -top-[20%] -left-[10%] w-[60vw] text-antique-gold/5 animate-slow-spin opacity-50" />
+        <Mandala className="absolute -bottom-[20%] -right-[10%] w-[60vw] text-antique-gold/5 animate-slow-spin opacity-50 direction-reverse" />
+        <div className="absolute inset-0 bg-shimmer opacity-30" />
+      </div>
+
       {/* Intro Header */}
-      <div className="h-screen flex flex-col items-center justify-center text-center px-4">
+      <div className="h-screen flex flex-col items-center justify-center text-center px-4 relative z-10">
          <p className="body-serif text-antique-gold/60 mb-4 uppercase tracking-[0.4em] text-xs">The Evolution</p>
          <h2 className="heading-invite text-[clamp(3.5rem,8vw,6rem)] text-off-white drop-shadow-[0_0_20px_rgba(212,175,55,0.2)]">
            A Journey Through <br />
@@ -84,7 +92,7 @@ export function Workflow() {
       </div>
 
       {/* Horizontal Track */}
-      <div ref={scrollRef} className="flex h-screen w-max items-center px-[20vw] gap-[15vw]">
+      <div ref={scrollRef} className="flex h-screen w-max items-center px-[20vw] gap-[15vw] relative z-10">
         {steps.map((step, i) => (
           <div key={i} className="journey-step w-[450px] flex-shrink-0 group">
             <div className="glass-maroon p-12 rounded-[40px] border border-antique-gold/10 group-hover:border-antique-gold/30 transition-all duration-700">

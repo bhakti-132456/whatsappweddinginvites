@@ -1,108 +1,79 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
 
 export function CustomCursor() {
-  const cursorRef = useRef<HTMLDivElement>(null);
+  const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
-  const [hoverText, setHoverText] = useState("");
+  const mousePos = useRef({ x: 0, y: 0 });
+  const ringPos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    const cursor = cursorRef.current;
-    const ring = ringRef.current;
-    if (!cursor || !ring) return;
-
-    gsap.set([cursor, ring], { opacity: 0 });
-
+    // 1. Optimized Coordinate Tracker
     const onMouseMove = (e: MouseEvent) => {
-      // Main Cursor Position (Instant)
-      gsap.to(cursor, {
-        x: e.clientX,
-        y: e.clientY,
-        opacity: 1,
-        duration: 0.1,
-      });
+      mousePos.current = { x: e.clientX, y: e.clientY };
+    };
 
-      // Gold Ring Follower (Lag)
-      gsap.to(ring, {
-        x: e.clientX,
-        y: e.clientY,
-        opacity: 1,
-        duration: 0.6,
-        ease: "power3.out",
-      });
+    // 2. High-Performance Render Loop
+    let rafId: number;
+    const render = () => {
+      if (dotRef.current && ringRef.current) {
+        // Instant Dot
+        dotRef.current.style.transform = `translate3d(${mousePos.current.x}px, ${mousePos.current.y}px, 0)`;
 
-      // Magnetic Logic for V4
-      const targets = document.querySelectorAll("[data-cursor='cta'], .btn-gold, .bento-card-v4");
-      targets.forEach((target) => {
-        const rect = target.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const dx = e.clientX - centerX;
-        const dy = e.clientY - centerY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        // Smooth LERP Ring
+        ringPos.current.x += (mousePos.current.x - ringPos.current.x) * 0.15;
+        ringPos.current.y += (mousePos.current.y - ringPos.current.y) * 0.15;
+        ringRef.current.style.transform = `translate3d(${ringPos.current.x}px, ${ringPos.current.y}px, 0)`;
+      }
+      rafId = requestAnimationFrame(render);
+    };
+    rafId = requestAnimationFrame(render);
 
-        if (distance < 120) {
-          const force = 0.2;
-          gsap.to(target, {
-            x: dx * force,
-            y: dy * force,
-            duration: 0.4,
-          });
-
-          // Ring Expansion
-          gsap.to(ring, {
-            scale: 3,
-            borderColor: "#C5A059",
-            backgroundColor: "transparent",
-            duration: 0.4,
-          });
-          setIsHovering(true);
-          setHoverText("VIEW");
-        } else {
-          // Reset
-          gsap.to(target, { x: 0, y: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
-        }
-      });
-      
-      // Reset ring if not specifically hovering
-      const activeHover = Array.from(targets).some(t => {
-         const r = t.getBoundingClientRect();
-         return e.clientX > r.left && e.clientX < r.right && e.clientY > r.top && e.clientY < r.bottom;
-      });
-      
-      if (!activeHover) {
-          gsap.to(ring, {
-            scale: 1,
-            borderColor: "#C5A059",
-            backgroundColor: "transparent",
-            duration: 0.4,
-          });
-          setIsHovering(false);
-          setHoverText("");
+    // 3. Optimized Hover Detection (Event Delegation)
+    const onMouseOver = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest("[data-cursor]");
+      if (target) {
+        setIsHovering(true);
+        const type = target.getAttribute("data-cursor");
+        if (type === "premium") ringRef.current?.classList.add("scale-150", "border-antique-gold");
+        if (type === "cta") ringRef.current?.classList.add("scale-[2.5]", "bg-antique-gold/10");
       }
     };
 
-    window.addEventListener("mousemove", onMouseMove);
-    return () => window.removeEventListener("mousemove", onMouseMove);
+    const onMouseOut = (e: MouseEvent) => {
+       const target = (e.target as HTMLElement).closest("[data-cursor]");
+       if (target) {
+         setIsHovering(false);
+         ringRef.current?.classList.remove("scale-150", "scale-[2.5]", "border-antique-gold", "bg-antique-gold/10");
+       }
+    };
+
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    document.addEventListener("mouseover", onMouseOver);
+    document.addEventListener("mouseout", onMouseOut);
+
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseover", onMouseOver);
+      document.removeEventListener("mouseout", onMouseOut);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   return (
     <>
-      {/* Central Dot */}
       <div
-        ref={cursorRef}
-        className="fixed top-0 left-0 w-1 h-1 bg-muted-gold rounded-full pointer-events-none z-[10001] -translate-x-1/2 -translate-y-1/2"
+        ref={dotRef}
+        className="fixed top-0 left-0 w-1.5 h-1.5 bg-antique-gold rounded-full pointer-events-none z-[10001] -translate-x-1/2 -translate-y-1/2 will-change-transform"
       />
-      {/* Gold Ring */}
       <div
         ref={ringRef}
-        className="fixed top-0 left-0 w-10 h-10 border border-muted-gold/50 rounded-full pointer-events-none z-[10000] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center transition-transform"
+        className="fixed top-0 left-0 w-10 h-10 border border-antique-gold/30 rounded-full pointer-events-none z-[10000] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center transition-all duration-500 ease-out will-change-transform"
       >
         {isHovering && (
-           <span className="body-technical text-[6px] text-muted-gold font-bold tracking-widest">{hoverText}</span>
+           <div className="w-1 h-1 bg-antique-gold rounded-full animate-ping" />
         )}
       </div>
     </>
