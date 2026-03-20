@@ -1,20 +1,20 @@
 "use client";
 
 import { Navbar } from "@/components/Navbar";
-import { Hero } from "@/components/Hero";
+import { HeroScrub } from "@/components/HeroScrub";
 import { TrinityGrid } from "@/components/TrinityGrid";
 import { Pricing } from "@/components/Pricing";
 import { Workflow } from "@/components/Workflow";
+import { Footer } from "@/components/Footer";
 import { BespokeOnboarding } from "@/components/BespokeOnboarding";
 import PhonePreview from "@/components/PhonePreview";
-import { Footer } from "@/components/Footer";
 
 export default function Home() {
   return (
     <>
       <Navbar />
-      <main className="relative z-10 bg-onyx">
-        <Hero />
+      <main className="relative z-10 bg-midnight">
+        <HeroScrub />
         <TrinityGrid />
         <Workflow />
         <Pricing />
@@ -25,7 +25,9 @@ export default function Home() {
             <PhonePreview />
         </section>
       </main>
-      <Footer />
+      <div className="fixed bottom-0 left-0 w-full h-[80vh] z-0">
+        <Footer />
+      </div>
     </>
   );
 }

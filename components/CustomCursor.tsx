@@ -5,26 +5,37 @@ import { gsap } from "gsap";
 
 export function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const [cursorType, setCursorType] = useState<"default" | "premium" | "cta">("default");
+  const ringRef = useRef<HTMLDivElement>(null);
+  const [isHovering, setIsHovering] = useState(false);
+  const [hoverText, setHoverText] = useState("");
 
   useEffect(() => {
     const cursor = cursorRef.current;
-    if (!cursor) return;
+    const ring = ringRef.current;
+    if (!cursor || !ring) return;
 
-    // Initial Hide
-    gsap.set(cursor, { opacity: 0 });
+    gsap.set([cursor, ring], { opacity: 0 });
 
     const onMouseMove = (e: MouseEvent) => {
+      // Main Cursor Position (Instant)
       gsap.to(cursor, {
         x: e.clientX,
         y: e.clientY,
         opacity: 1,
-        duration: 0.5,
+        duration: 0.1,
+      });
+
+      // Gold Ring Follower (Lag)
+      gsap.to(ring, {
+        x: e.clientX,
+        y: e.clientY,
+        opacity: 1,
+        duration: 0.6,
         ease: "power3.out",
       });
 
-      // Magnetic Snapping Logic
-      const targets = document.querySelectorAll("[data-cursor='cta'], .btn-premium, .btn-premium-outline");
+      // Magnetic Logic for V4
+      const targets = document.querySelectorAll("[data-cursor='cta'], .btn-gold, .bento-card-v4");
       targets.forEach((target) => {
         const rect = target.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
@@ -34,57 +45,66 @@ export function CustomCursor() {
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance < 120) {
-          // Snap button toward cursor
+          const force = 0.2;
           gsap.to(target, {
-            x: dx * 0.2, // Snap force (0.2x distance)
-            y: dy * 0.2,
-            duration: 0.3,
-            ease: "power2.out",
+            x: dx * force,
+            y: dy * force,
+            duration: 0.4,
           });
-          // Expand cursor
-          gsap.to(cursor, { scale: 3, duration: 0.3 });
-          setCursorType("cta");
+
+          // Ring Expansion
+          gsap.to(ring, {
+            scale: 3,
+            borderColor: "#C5A059",
+            backgroundColor: "transparent",
+            duration: 0.4,
+          });
+          setIsHovering(true);
+          setHoverText("VIEW");
         } else {
-          // Reset button
-          gsap.to(target, {
-            x: 0,
-            y: 0,
-            duration: 0.6,
-            ease: "elastic.out(1, 0.3)",
-          });
-          // Reset cursor
-          if (distance > 200) {
-             gsap.to(cursor, { scale: 1, duration: 0.3 });
-             setCursorType("default");
-          }
+          // Reset
+          gsap.to(target, { x: 0, y: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
         }
       });
-    };
-
-    const onMouseEnter = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest("[data-cursor='premium']")) setCursorType("premium");
+      
+      // Reset ring if not specifically hovering
+      const activeHover = Array.from(targets).some(t => {
+         const r = t.getBoundingClientRect();
+         return e.clientX > r.left && e.clientX < r.right && e.clientY > r.top && e.clientY < r.bottom;
+      });
+      
+      if (!activeHover) {
+          gsap.to(ring, {
+            scale: 1,
+            borderColor: "#C5A059",
+            backgroundColor: "transparent",
+            duration: 0.4,
+          });
+          setIsHovering(false);
+          setHoverText("");
+      }
     };
 
     window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseover", onMouseEnter);
-
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseover", onMouseEnter);
-    };
+    return () => window.removeEventListener("mousemove", onMouseMove);
   }, []);
 
   return (
-    <div
-      ref={cursorRef}
-      className={`fixed top-0 left-0 w-4 h-4 rounded-full pointer-events-none z-[10000] mix-blend-difference flex items-center justify-center -translate-x-1/2 -translate-y-1/2 transition-colors duration-500 bg-pearl ${
-          cursorType === "premium" ? "scale-[4]" : cursorType === "cta" ? "scale-[3]" : ""
-      }`}
-    >
-       {cursorType === "premium" && (
-          <div className="w-1 h-1 rounded-full bg-onyx animate-ping" />
-       )}
-    </div>
+    <>
+      {/* Central Dot */}
+      <div
+        ref={cursorRef}
+        className="fixed top-0 left-0 w-1 h-1 bg-muted-gold rounded-full pointer-events-none z-[10001] -translate-x-1/2 -translate-y-1/2"
+      />
+      {/* Gold Ring */}
+      <div
+        ref={ringRef}
+        className="fixed top-0 left-0 w-10 h-10 border border-muted-gold/50 rounded-full pointer-events-none z-[10000] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center transition-transform"
+      >
+        {isHovering && (
+           <span className="body-technical text-[6px] text-muted-gold font-bold tracking-widest">{hoverText}</span>
+        )}
+      </div>
+    </>
   );
 }

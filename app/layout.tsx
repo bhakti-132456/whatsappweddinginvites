@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Cormorant_Garamond, Montserrat, Alex_Brush } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { CustomCursor } from "@/components/CustomCursor";
+import { Preloader } from "@/components/Preloader";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -11,10 +12,17 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const alexBrush = Alex_Brush({
+  variable: "--font-alex-brush",
+  subsets: ["latin"],
+  weight: ["400"],
   display: "swap",
 });
 
@@ -43,11 +51,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
-      <body className="font-sans antialiased">
+    <html lang="en" className={`${cormorant.variable} ${montserrat.variable} ${alexBrush.variable}`}>
+      <body className="font-serif antialiased bg-imperial-maroon text-off-white">
+        <Preloader />
         <CustomCursor />
         <SmoothScroll>
-          {children}
+          <div className="relative overflow-visible">
+            {children}
+          </div>
         </SmoothScroll>
       </body>
     </html>

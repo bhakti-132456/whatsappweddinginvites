@@ -1,118 +1,105 @@
 @import "tailwindcss";
 
-@theme inline {
-  /* Deterministic Hex Palette */
-  --color-onyx: #021612;
-  --color-onyx-light: #05241e;
-  --color-champagne: #F3EAC6;
-  --color-matte-gold: #D4AF37;
-  --color-pearl: #ffffff;
+@theme {
+  /* Dynamic Design System Tokens */
+  --color-maroon: #4d0b0b;
+  --color-imperial-maroon: #2d0909;
+  --color-royal-maroon: #400a0a;
   
-  /* Typography */
-  --font-serif: var(--font-cormorant);
-  --font-sans: var(--font-inter);
+  --color-antique-gold: #D4AF37;
+  --color-muted-gold: #C5A059;
+  --color-deep-gold: #996515;
+  --color-saffron: #F4C430;
   
-  /* 8pt Linear Scaling System (Tailwind v4 spacing override or extension) */
-  --spacing-1: 0.5rem;   /* 8px */
-  --spacing-2: 1rem;     /* 16px */
-  --spacing-3: 1.5rem;   /* 24px */
-  --spacing-4: 2rem;     /* 32px */
-  --spacing-5: 3rem;     /* 48px */
-  --spacing-6: 4rem;     /* 64px */
-  --spacing-8: 6rem;     /* 96px */
-  --spacing-10: 8rem;    /* 128px */
+  --color-off-white: #FDFCF0;
+  
+  --font-cormorant: var(--font-cormorant);
+  --font-alex-brush: var(--font-alex-brush);
 }
 
 @layer base {
   body {
-    @apply bg-onyx text-pearl antialiased overflow-x-hidden;
-    font-family: var(--font-sans);
+    background-color: var(--color-imperial-maroon);
+    color: var(--color-off-white);
+    font-family: var(--font-cormorant), serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* Global Noise Map Overlay (Low-frequency noise map) */
+  /* Awwwards Grain Overlay */
   body::after {
     content: "";
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
+    top: -150%;
+    left: -150%;
+    width: 300%;
+    height: 300%;
     background-image: url("https://grainy-gradients.vercel.app/noise.svg");
     opacity: 0.04;
-    filter: contrast(150%) brightness(100%);
+    z-index: 9999;
+    pointer-events: none;
+    animation: grain 8s steps(10) infinite;
   }
-  
-  h1, h2, h3 {
-    @apply font-serif;
+
+  @keyframes grain {
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-5%, -10%); }
+    30% { transform: translate(3%, -15%); }
+    50% { transform: translate(12%, 9%); }
+    70% { transform: translate(9%, 4%); }
+    90% { transform: translate(-10%, 10%); }
   }
 }
 
 @layer components {
-  /* High-contrast Display Header */
-  .heading-xl {
-    @apply font-serif font-light leading-[0.9] tracking-[-0.04em];
-    font-size: clamp(4rem, 12vw, 15rem);
+  .heading-invite {
+    font-family: var(--font-alex-brush), cursive;
+    font-weight: 400;
   }
 
-  .heading-lg {
-    @apply font-serif font-light leading-[1.1] tracking-[-0.02em];
-    font-size: clamp(2.5rem, 8vw, 6rem);
+  .heading-serif {
+    font-family: var(--font-cormorant), serif;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
   }
 
-  /* Mono-spaced, wide-tracked Sans-Serif Body */
-  .body-mono {
-    @apply font-sans font-light tracking-[0.15em] uppercase;
-    font-size: clamp(0.7rem, 0.8vw, 0.9rem);
+  .body-serif {
+    font-family: var(--font-cormorant), serif;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
   }
 
-  /* Bento Grid 2.0 & Glassmorphism */
-  .glass-2 {
-    @apply bg-white/[0.03] backdrop-blur-[25px] border border-white/5 rounded-[40px] transition-all duration-500 overflow-hidden;
+  /* Glassmorphism 3.0 - Maroon Luxe */
+  .glass-maroon {
+    background: rgba(45, 9, 9, 0.6);
+    backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  /* The Golden Thread Button */
+  .btn-gold {
+    position: relative;
+    padding: 1.25rem 2.5rem; /* 5 * 8px */
+    font-family: var(--font-cormorant), serif;
+    color: #D4AF37;
+    text-transform: uppercase;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    transition: all 0.5s;
+    letter-spacing: 0.2em;
   }
   
-  .glass-2:hover {
-    @apply border-matte-gold/10;
-  }
-
-  /* Premium Buttons */
-  .btn-premium {
-    @apply relative overflow-hidden px-10 py-5 bg-matte-gold text-onyx font-bold uppercase tracking-[0.2em] text-[10px] transition-all duration-500 rounded-full;
-  }
-
-  .btn-premium-outline {
-    @apply relative overflow-hidden px-10 py-5 border border-matte-gold/30 text-matte-gold font-bold uppercase tracking-[0.2em] text-[10px] transition-all duration-500 hover:bg-matte-gold/10 rounded-full;
-  }
-
-  /* Horizontal transform sections */
-  .horizontal-plane {
-    @apply flex flex-nowrap h-screen items-center;
-    will-change: transform;
-  }
-
-  .section-padding {
-    @apply py-20 px-8 lg:py-40 lg:px-20;
+  .btn-gold:hover {
+    background-color: #D4AF37;
+    color: #2d0909;
   }
 }
 
-/* Custom Scrollbar for Lenis compatibility */
-html.lenis {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
+@layer utilities {
+  .mask-reveal {
+    mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  }
 }

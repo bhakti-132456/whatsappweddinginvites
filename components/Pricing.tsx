@@ -49,7 +49,7 @@ const tiers = [
       "Lifetime Asset Archive",
     ],
     cta: "Inquire Now",
-    accent: "champagne",
+    accent: "antique-gold",
   },
 ];
 
@@ -78,8 +78,8 @@ export function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: i * 0.1 }}
-              className={`group relative p-10 flex flex-col border border-pearl/5 rounded-[40px] bg-onyx transition-all duration-500 hover:border-champagne/20 ${
-                tier.popular ? "shadow-[0_0_50px_rgba(212,189,142,0.05)]" : ""
+              className={`group relative p-10 flex flex-col border border-antique-gold/10 rounded-[40px] bg-maroon/20 hover:bg-maroon/40 backdrop-blur-sm transition-all duration-500 hover:border-antique-gold/40 ${
+                tier.popular ? "shadow-[0_0_50px_rgba(212,175,55,0.05)]" : ""
               }`}
               data-cursor="premium"
             >
@@ -90,8 +90,8 @@ export function Pricing() {
               )}
 
               <div className="mb-10">
-                <p className="text-pearl/40 text-[10px] uppercase tracking-widest mb-1">{tier.subtitle}</p>
-                <h3 className="heading-md text-2xl text-pearl">{tier.name}</h3>
+                <p className="text-antique-gold/40 text-[10px] uppercase tracking-widest mb-1">{tier.subtitle}</p>
+                <h3 className="heading-invite text-4xl text-off-white">{tier.name}</h3>
               </div>
 
               <div className="mb-8">
