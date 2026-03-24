@@ -38,9 +38,9 @@ export default function Home() {
            <InvitePreview />
            <Pricing />
            <BespokeOnboarding />
-           <section id="preview" className="bg-maroon/20 flex flex-col items-center py-60 border-t border-antique-gold/5">
+           <section id="preview" className="bg-maroon/20 flex flex-col items-center py-20 md:py-32 border-t border-antique-gold/5">
                <p className="body-serif text-antique-gold mb-8 uppercase tracking-[0.6em] text-xs">The Perspective</p>
-               <h2 className="heading-invite text-center mb-24 text-6xl lg:text-8xl">The Signature <br /><span className="heading-serif italic text-antique-gold">Heirloom</span></h2>
+               <h2 className="heading-invite text-center mb-8 text-5xl md:text-6xl lg:text-8xl px-4">The Signature <br /><span className="heading-serif italic text-antique-gold">Heirloom</span></h2>
                <PhonePreview />
            </section>
         </div>

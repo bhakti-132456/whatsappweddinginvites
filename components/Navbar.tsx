@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
+  { label: "Studio", href: "#studio" },
   { label: "Services", href: "#services" },
   { label: "Journey", href: "#onboarding" },
   { label: "Process", href: "#process" },
-  { label: "Preview", href: "#preview" },
   { label: "Pricing", href: "#pricing", accent: "antique-gold" },
 ];
 
@@ -21,6 +21,22 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
+  const scrollTo = (href: string) => {
+    setMobileOpen(false);
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <>
       <motion.nav
@@ -31,13 +47,13 @@ export function Navbar() {
           scrolled ? "bg-maroon/80 backdrop-blur-xl py-3 shadow-[0_8px_32px_rgba(0,0,0,0.5)]" : "bg-transparent py-6"
         }`}
       >
-        <div className="flex items-center justify-between px-8">
+        <div className="flex items-center justify-between px-6 md:px-8">
           {/* Logo */}
           <a href="#" className="flex items-center gap-3 group" data-cursor="premium">
-            <div className="w-12 h-12 rounded-full border border-antique-gold/30 bg-maroon flex items-center justify-center text-antique-gold heading-invite text-2xl transition-transform group-hover:rotate-12 shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-antique-gold/30 bg-maroon flex items-center justify-center text-antique-gold heading-invite text-xl md:text-2xl transition-transform group-hover:rotate-12 shadow-[0_0_20px_rgba(212,175,55,0.2)]">
               W
             </div>
-            <span className="heading-serif text-2xl tracking-tight text-off-white group-hover:text-antique-gold transition-colors">
+            <span className="heading-serif text-xl md:text-2xl tracking-tight text-off-white group-hover:text-antique-gold transition-colors">
               Heritage
             </span>
           </a>
@@ -58,56 +74,74 @@ export function Navbar() {
 
           {/* CTA */}
           <button
-            className="hidden md:flex btn-gold !py-2.5 !px-8 text-[10px] magnetic-target"
+            onClick={() => scrollTo("#studio")}
+            className="hidden md:flex btn-gold !py-2.5 !px-8 text-[10px] magnetic-target !rounded-full"
             data-cursor="cta"
           >
             Get Started
           </button>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button — visible hamburger with gold lines */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden flex flex-col gap-1.5 p-2"
+            className="md:hidden flex flex-col items-center justify-center gap-[5px] w-10 h-10 rounded-full border border-antique-gold/20 bg-maroon/40"
             aria-label="Menu"
           >
             <motion.div
-              animate={{ rotate: mobileOpen ? 45 : 0, y: mobileOpen ? 8 : 0 }}
-              className="w-6 h-px bg-pearl"
+              animate={{ rotate: mobileOpen ? 45 : 0, y: mobileOpen ? 7 : 0 }}
+              className="w-4 h-[1.5px] bg-antique-gold rounded-full"
             />
             <motion.div
-              animate={{ opacity: mobileOpen ? 0 : 1 }}
-              className="w-6 h-px bg-pearl"
+              animate={{ opacity: mobileOpen ? 0 : 1, scaleX: mobileOpen ? 0 : 1 }}
+              className="w-4 h-[1.5px] bg-antique-gold rounded-full"
             />
             <motion.div
-              animate={{ rotate: mobileOpen ? -45 : 0, y: mobileOpen ? -8 : 0 }}
-              className="w-6 h-px bg-pearl"
+              animate={{ rotate: mobileOpen ? -45 : 0, y: mobileOpen ? -7 : 0 }}
+              className="w-4 h-[1.5px] bg-antique-gold rounded-full"
             />
           </button>
         </div>
       </motion.nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu — Full screen overlay */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-onyx flex flex-col items-center justify-center gap-12 md:hidden"
+            className="fixed inset-0 z-40 bg-imperial-maroon/98 backdrop-blur-xl flex flex-col items-center justify-center gap-10 md:hidden"
           >
+            {/* Decorative background */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-antique-gold/[0.02] blur-[100px]" />
+            </div>
+
             {navLinks.map((link, i) => (
-              <motion.a
+              <motion.button
                 key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                initial={{ opacity: 0, y: 20 }}
+                onClick={() => scrollTo(link.href)}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="text-4xl font-serif text-pearl hover:text-champagne transition-colors"
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+                className="heading-invite text-5xl text-off-white hover:text-antique-gold transition-colors duration-300"
               >
                 {link.label}
-              </motion.a>
+              </motion.button>
             ))}
+
+            {/* Mobile CTA */}
+            <motion.button
+              onClick={() => scrollTo("#studio")}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ delay: navLinks.length * 0.08, duration: 0.5 }}
+              className="mt-4 btn-gold !bg-antique-gold !text-imperial-maroon !rounded-full !px-12 text-sm"
+            >
+              Get Started
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>

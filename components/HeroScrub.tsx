@@ -40,7 +40,7 @@ export function HeroScrub() {
       if (video.readyState >= 2 && video.duration) {
         const diff = targetTime.current - currentTime.current;
         if (Math.abs(diff) > 0.0001) {
-          currentTime.current += diff * 0.12; // Adjusted for cinematic smoothness
+          currentTime.current += diff * 0.12;
           video.currentTime = currentTime.current;
         }
       }
@@ -65,7 +65,7 @@ export function HeroScrub() {
 
     // Content Reveal (Wedding Invitation Aesthetic)
     tl.to(overlayRef.current, {
-      backgroundColor: "rgba(45, 9, 9, 0.7)", // Deep Maroon overlay
+      backgroundColor: "rgba(45, 9, 9, 0.7)",
       duration: 1
     }, 0)
     .fromTo(headlineRef.current, 
@@ -92,10 +92,11 @@ export function HeroScrub() {
     <div ref={containerRef} className="relative h-[250vh] bg-imperial-maroon overflow-visible">
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
         
-        {/* The Cinematic Scrub Video */}
+        {/* The Cinematic Scrub Video — with poster fallback */}
         <video
           ref={videoRef}
           src={videoSrc || "/web-hero-scrub.mp4"}
+          poster="/preview-invite.jpg"
           muted
           playsInline
           loop
@@ -136,14 +137,25 @@ export function HeroScrub() {
                whileHover={{ scale: 1.05 }}
                whileTap={{ scale: 0.95 }}
                className="btn-gold group overflow-hidden"
+               onClick={() => {
+                 const el = document.getElementById("studio");
+                 if (el) el.scrollIntoView({ behavior: "smooth" });
+               }}
              >
                <span className="relative z-10">Request Your Design</span>
                <div className="absolute inset-0 bg-antique-gold translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
              </motion.button>
              
-             <div className="flex flex-col items-center gap-2">
-                <div className="w-[1px] h-24 bg-gradient-to-b from-transparent via-antique-gold to-transparent opacity-50" />
-                <p className="body-serif text-[10px] text-muted-gold/60 uppercase tracking-[0.4em]">Scroll to Open</p>
+             {/* Animated Scroll Indicator */}
+             <div className="flex flex-col items-center gap-3">
+                <div className="w-[1px] h-12 bg-gradient-to-b from-transparent via-antique-gold/50 to-antique-gold/80 animate-scroll-bounce" />
+                <svg className="w-5 h-5 text-antique-gold/60 animate-scroll-bounce" style={{ animationDelay: "0.3s" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+                <svg className="w-4 h-4 text-antique-gold/30 animate-scroll-bounce -mt-3" style={{ animationDelay: "0.6s" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+                <p className="body-serif text-[10px] text-muted-gold/40 uppercase tracking-[0.4em] mt-1">Scroll to Open</p>
              </div>
           </div>
         </div>

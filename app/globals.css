@@ -12,9 +12,14 @@
   --color-saffron: #F4C430;
   
   --color-off-white: #FDFCF0;
+  --color-pearl: #E8E4D9;
+  --color-champagne: #F7E7CE;
+  --color-midnight: #0a0a14;
+  --color-onyx: #111111;
   
   --font-cormorant: var(--font-cormorant);
   --font-alex-brush: var(--font-alex-brush);
+  --font-montserrat: var(--font-montserrat);
 }
 
 @layer base {
@@ -74,6 +79,13 @@
     letter-spacing: 0.02em;
   }
 
+  .body-technical {
+    font-family: var(--font-montserrat), sans-serif;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0.05em;
+  }
+
   /* Glassmorphism 3.0 - Maroon Luxe */
   .glass-maroon {
     background: rgba(45, 9, 9, 0.6);
@@ -85,18 +97,65 @@
   /* The Golden Thread Button */
   .btn-gold {
     position: relative;
-    padding: 1.25rem 2.5rem; /* 5 * 8px */
+    padding: 1.25rem 2.5rem;
     font-family: var(--font-cormorant), serif;
     color: #D4AF37;
     text-transform: uppercase;
     border: 1px solid rgba(212, 175, 55, 0.3);
     transition: all 0.5s;
     letter-spacing: 0.2em;
+    cursor: pointer;
   }
   
   .btn-gold:hover {
     background-color: #D4AF37;
     color: #2d0909;
+  }
+
+  /* Upload Drop Zone */
+  .upload-zone {
+    position: relative;
+    overflow: hidden;
+    border: 1px dashed rgba(212, 175, 55, 0.15);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    transition: all 0.4s ease;
+    cursor: pointer;
+  }
+
+  .upload-zone:hover,
+  .upload-zone.drag-over {
+    border-color: rgba(212, 175, 55, 0.5);
+    background: rgba(212, 175, 55, 0.05);
+  }
+
+  .upload-zone.drag-over::after {
+    content: "Drop here";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(45, 9, 9, 0.9);
+    color: #D4AF37;
+    font-family: var(--font-cormorant), serif;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    z-index: 5;
+    border-radius: 1.5rem;
+  }
+
+  /* Inquiry Modal Backdrop */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -119,6 +178,21 @@
     animation: soft-pulse 8s ease-in-out infinite;
   }
 
+  /* Scroll Indicator Bounce */
+  .animate-scroll-bounce {
+    animation: scroll-bounce 2s ease-in-out infinite;
+  }
+
+  /* Shimmer Gold Effect */
+  .animate-shimmer-gold {
+    animation: shimmer-gold 2.5s ease-in-out infinite;
+  }
+
+  /* Sparkle Pulse */
+  .animate-sparkle {
+    animation: sparkle-pulse 1.5s ease-in-out infinite;
+  }
+
   @keyframes slow-spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
@@ -127,5 +201,26 @@
   @keyframes soft-pulse {
     0%, 100% { opacity: 0.02; transform: scale(1); }
     50% { opacity: 0.05; transform: scale(1.05); }
+  }
+
+  @keyframes scroll-bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.6; }
+    50% { transform: translateY(12px); opacity: 1; }
+  }
+
+  @keyframes shimmer-gold {
+    0%, 100% { 
+      text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+      filter: brightness(1);
+    }
+    50% { 
+      text-shadow: 0 0 40px rgba(212, 175, 55, 0.6), 0 0 80px rgba(212, 175, 55, 0.2);
+      filter: brightness(1.2);
+    }
+  }
+
+  @keyframes sparkle-pulse {
+    0%, 100% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1); }
   }
 }

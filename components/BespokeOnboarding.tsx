@@ -9,9 +9,9 @@ const steps = [
     title: "Select Your Aesthetic",
     subtitle: "Choosing the soul of your digital heirloom.",
     options: [
-      { id: "editorial", label: "Editorial", icon: "💎", desc: "Minimal layout" },
-      { id: "cinematic", label: "Cinematic", icon: "🎬", desc: "Fluid motion" },
-      { id: "traditional", label: "Heritage", icon: "🏰", desc: "Gold accents" },
+      { id: "editorial", label: "Editorial", icon: "💎", desc: "Minimal layout with clean typography" },
+      { id: "cinematic", label: "Cinematic", icon: "🎬", desc: "Fluid motion and rich visuals" },
+      { id: "traditional", label: "Heritage", icon: "🏰", desc: "Gold accents and royal motifs" },
     ],
   },
   {
@@ -23,6 +23,11 @@ const steps = [
     id: "story",
     title: "The Love Story",
     subtitle: "Briefly share the magic behind your union.",
+  },
+  {
+    id: "complete",
+    title: "Your Vision is Set",
+    subtitle: "Here's a summary of your bespoke invitation brief.",
   },
 ];
 
@@ -43,6 +48,27 @@ export function BespokeOnboarding() {
     if (currentStep === 1) return !!formData.date && !!formData.venue;
     if (currentStep === 2) return !!formData.story;
     return false;
+  };
+
+  const handleComplete = () => {
+    nextStep(); // Move to the confirmation step
+  };
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const vibeLabels: Record<string, string> = {
+    editorial: "Editorial",
+    cinematic: "Cinematic",
+    traditional: "Heritage",
+  };
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr + "T00:00:00");
+    return d.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
   };
 
   return (
@@ -138,25 +164,103 @@ export function BespokeOnboarding() {
                   </div>
                 </div>
               )}
+
+              {/* Confirmation Step */}
+              {currentStep === 3 && (
+                <div className="space-y-10">
+                  {/* Summary Card */}
+                  <div className="glass-maroon rounded-[30px] md:rounded-[40px] p-8 md:p-12 space-y-8">
+                    <div className="flex items-center gap-4 mb-8">
+                      <div className="w-12 h-12 rounded-full bg-antique-gold/10 border border-antique-gold/30 flex items-center justify-center">
+                        <svg className="w-6 h-6 text-antique-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="body-serif text-antique-gold text-sm font-bold">Inquiry Complete</p>
+                        <p className="body-serif text-off-white/30 text-xs">Your vision has been captured</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <span className="body-serif text-antique-gold/40 text-[9px] uppercase tracking-widest">Aesthetic</span>
+                        <p className="text-xl text-off-white heading-invite">{vibeLabels[formData.vibe] || formData.vibe}</p>
+                      </div>
+                      <div className="space-y-2">
+                        <span className="body-serif text-antique-gold/40 text-[9px] uppercase tracking-widest">Date</span>
+                        <p className="text-xl text-off-white heading-invite">{formatDate(formData.date)}</p>
+                      </div>
+                      <div className="space-y-2">
+                        <span className="body-serif text-antique-gold/40 text-[9px] uppercase tracking-widest">Venue</span>
+                        <p className="text-xl text-off-white heading-invite">{formData.venue}</p>
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <span className="body-serif text-antique-gold/40 text-[9px] uppercase tracking-widest">Your Story</span>
+                        <p className="body-serif text-off-white/60 text-sm leading-relaxed italic">&ldquo;{formData.story}&rdquo;</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CTAs */}
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <button 
+                      onClick={() => scrollTo("studio")}
+                      className="btn-gold flex-1 text-center !rounded-2xl group"
+                    >
+                      <span className="relative z-10 flex items-center justify-center gap-3">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5" />
+                        </svg>
+                        Preview Your Design
+                      </span>
+                    </button>
+                    <button 
+                      onClick={() => scrollTo("pricing")}
+                      className="btn-gold flex-1 text-center !rounded-2xl !bg-antique-gold !text-imperial-maroon hover:!bg-saffron"
+                    >
+                      Choose Your Tier →
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="mt-20 md:mt-24 flex justify-between items-center">
-              <button 
-                onClick={prevStep}
-                className={`body-serif text-antique-gold/40 text-[10px] uppercase tracking-[0.4em] hover:text-antique-gold transition-colors ${currentStep === 0 ? "invisible" : ""}`}
-              >
-                &larr; Return
-              </button>
-              
-              <button 
-                  disabled={!isStepValid()}
-                  onClick={currentStep < steps.length - 1 ? nextStep : undefined}
-                  className={`btn-gold !px-12 md:!px-16 ${!isStepValid() ? "opacity-20 cursor-not-allowed" : ""}`}
-                  data-cursor="cta"
-              >
-                  {currentStep < steps.length - 1 ? "Next Step" : "Complete Inquiry"}
-              </button>
-            </div>
+            {/* Navigation */}
+            {currentStep < 3 && (
+              <div className="mt-20 md:mt-24 flex justify-between items-center">
+                <button 
+                  onClick={prevStep}
+                  className={`body-serif text-antique-gold/40 text-[10px] uppercase tracking-[0.4em] hover:text-antique-gold transition-colors ${currentStep === 0 ? "invisible" : ""}`}
+                >
+                  &larr; Return
+                </button>
+                
+                <button 
+                    disabled={!isStepValid()}
+                    onClick={currentStep < 2 ? nextStep : handleComplete}
+                    className={`btn-gold !px-12 md:!px-16 ${!isStepValid() ? "opacity-20 cursor-not-allowed" : ""}`}
+                    data-cursor="cta"
+                >
+                    {currentStep < 2 ? "Next Step" : "Complete Inquiry"}
+                </button>
+              </div>
+            )}
+
+            {/* Restart on confirmation */}
+            {currentStep === 3 && (
+              <div className="mt-12 text-center">
+                <button 
+                  onClick={() => {
+                    setCurrentStep(0);
+                    setFormData({ vibe: "", date: "", venue: "", story: "" });
+                  }}
+                  className="body-serif text-antique-gold/30 text-[10px] uppercase tracking-[0.4em] hover:text-antique-gold transition-colors"
+                >
+                  ← Start New Inquiry
+                </button>
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

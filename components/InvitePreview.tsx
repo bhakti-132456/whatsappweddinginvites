@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Smartphone, Globe, Shield, Check, X, Play, Image as ImageIcon } from "lucide-react";
+import { motion } from "framer-motion";
+import { Camera, Smartphone, Globe, Shield, Play, Image as ImageIcon, X } from "lucide-react";
 
 // --- Types & Themes ---
 
@@ -19,18 +19,22 @@ interface StudioState {
   template: TemplateID;
   theme: ThemeID;
   photoUrl: string | null;
+  photoName: string;
+  photoSize: string;
   videoUrl: string | null;
+  videoName: string;
+  videoSize: string;
 }
 
-const themes: Record<ThemeID, { bg: string; accent: string; heading: string; body: string }> = {
-  rose: { bg: '#FFF5F5', accent: '#C9786A', heading: '#3D1F1A', body: '#8A5550' },
-  marigold: { bg: '#FFFBF0', accent: '#C88B2C', heading: '#3D2A0A', body: '#8A6A30' },
-  royal: { bg: '#F5F0FF', accent: '#6B4FA8', heading: '#1E1040', body: '#5A4880' },
-  sage: { bg: '#F2F7F2', accent: '#4A7C5C', heading: '#1A3024', body: '#4A6858' },
-  midnight: { bg: '#1A1A2E', accent: '#E8C97B', heading: '#F5F0E8', body: '#A89870' },
-  blush: { bg: '#FFF0F5', accent: '#D4789A', heading: '#3D1A2A', body: '#8A5068' },
-  slate: { bg: '#F0F4F8', accent: '#3D5A80', heading: '#1A2840', body: '#4A6080' },
-  copper: { bg: '#FDF6EE', accent: '#A0522D', heading: '#3D1E0A', body: '#7A4828' }
+const themes: Record<ThemeID, { bg: string; accent: string; heading: string; body: string; name: string }> = {
+  rose:     { bg: '#FFF5F5', accent: '#C9786A', heading: '#3D1F1A', body: '#8A5550', name: 'Blush Rose' },
+  marigold: { bg: '#FFFBF0', accent: '#C88B2C', heading: '#3D2A0A', body: '#8A6A30', name: 'Golden Marigold' },
+  royal:    { bg: '#F5F0FF', accent: '#6B4FA8', heading: '#1E1040', body: '#5A4880', name: 'Royal Orchid' },
+  sage:     { bg: '#F2F7F2', accent: '#4A7C5C', heading: '#1A3024', body: '#4A6858', name: 'Garden Sage' },
+  midnight: { bg: '#1A1A2E', accent: '#E8C97B', heading: '#F5F0E8', body: '#A89870', name: 'Midnight Gold' },
+  blush:    { bg: '#FFF0F5', accent: '#D4789A', heading: '#3D1A2A', body: '#8A5068', name: 'Ivory Blush' },
+  slate:    { bg: '#F0F4F8', accent: '#3D5A80', heading: '#1A2840', body: '#4A6080', name: 'Coastal Slate' },
+  copper:   { bg: '#FDF6EE', accent: '#A0522D', heading: '#3D1E0A', body: '#7A4828', name: 'Burnished Copper' },
 };
 
 // --- Templates (React Components) ---
@@ -193,6 +197,99 @@ const ModernTemplate = ({ state }: { state: StudioState }) => {
   );
 };
 
+// --- Utility: format file size ---
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+// --- Upload Zone Component ---
+function UploadZone({ 
+  label, 
+  accept, 
+  value, 
+  fileName, 
+  fileSize, 
+  onFile, 
+  onClear, 
+  icon: Icon, 
+  previewType 
+}: {
+  label: string;
+  accept: string;
+  value: string | null;
+  fileName: string;
+  fileSize: string;
+  onFile: (file: File) => void;
+  onClear: () => void;
+  icon: any;
+  previewType: 'image' | 'video';
+}) {
+  const [dragOver, setDragOver] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) onFile(file);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) onFile(file);
+  };
+
+  return (
+    <div className="space-y-3">
+      <label className="body-serif text-antique-gold/40 text-[9px] uppercase tracking-widest block">{label}</label>
+      <div 
+        className={`upload-zone h-36 flex flex-col items-center justify-center ${dragOver ? 'drag-over' : ''}`}
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={handleDrop}
+        onClick={() => inputRef.current?.click()}
+      >
+        <input ref={inputRef} type="file" accept={accept} onChange={handleChange} className="hidden" />
+        
+        {value ? (
+          <div className="flex items-center gap-4 relative z-10">
+            {previewType === 'image' ? (
+              <img src={value} className="w-14 h-14 rounded-xl object-cover border border-antique-gold/30" alt="Upload preview" />
+            ) : (
+              <div className="w-14 h-14 rounded-xl bg-antique-gold/10 flex items-center justify-center border border-antique-gold/30">
+                <Play className="w-5 h-5 text-antique-gold" />
+              </div>
+            )}
+            <div className="flex flex-col gap-1 text-left">
+              <span className="text-xs text-off-white font-medium truncate max-w-[140px]">{fileName}</span>
+              <span className="text-[9px] text-off-white/30 uppercase tracking-wider">{fileSize}</span>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center relative z-10">
+            <Icon className="w-6 h-6 text-antique-gold/30 mx-auto mb-3" />
+            <span className="text-[10px] text-off-white/30 uppercase tracking-widest block">Click or Drop to Upload</span>
+            <span className="text-[8px] text-off-white/15 uppercase tracking-wider mt-1 block">
+              {previewType === 'image' ? 'JPG, PNG, WebP' : 'MP4, WebM'}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {value && (
+        <button 
+          onClick={(e) => { e.stopPropagation(); onClear(); }}
+          className="flex items-center gap-2 text-[9px] text-red-400/70 uppercase tracking-widest font-bold hover:text-red-400 transition-colors"
+        >
+          <X className="w-3 h-3" /> Remove
+        </button>
+      )}
+    </div>
+  );
+}
+
 // --- Main Studio Component ---
 
 export function InvitePreview() {
@@ -206,7 +303,11 @@ export function InvitePreview() {
     template: 'floral',
     theme: 'rose',
     photoUrl: null,
+    photoName: '',
+    photoSize: '',
     videoUrl: null,
+    videoName: '',
+    videoSize: '',
   });
 
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -228,22 +329,26 @@ export function InvitePreview() {
   }, [scalePreview]);
 
   // Handle Photo Upload
-  const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => setState(prev => ({ ...prev, photoUrl: ev.target?.result as string }));
-      reader.readAsDataURL(file);
-    }
+  const handlePhoto = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => setState(prev => ({ 
+      ...prev, 
+      photoUrl: ev.target?.result as string,
+      photoName: file.name,
+      photoSize: formatFileSize(file.size),
+    }));
+    reader.readAsDataURL(file);
   };
 
   // Handle Video Upload
-  const handleVideo = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setState(prev => ({ ...prev, videoUrl: url }));
-    }
+  const handleVideo = (file: File) => {
+    const url = URL.createObjectURL(file);
+    setState(prev => ({ 
+      ...prev, 
+      videoUrl: url,
+      videoName: file.name,
+      videoSize: formatFileSize(file.size),
+    }));
   };
 
   const templatesMap = {
@@ -274,7 +379,7 @@ export function InvitePreview() {
             {/* Column 1: Core Details */}
             <div className="space-y-6">
                <div className="space-y-2">
-                 <label className="body-serif text-antique-gold/40 text-[9px] uppercase tracking-widest">Bride's Name</label>
+                 <label className="body-serif text-antique-gold/40 text-[9px] uppercase tracking-widest">Bride&apos;s Name</label>
                  <input 
                    type="text" 
                    value={state.name1} 
@@ -283,7 +388,7 @@ export function InvitePreview() {
                  />
                </div>
                <div className="space-y-2">
-                 <label className="body-serif text-antique-gold/40 text-[9px] uppercase tracking-widest">Groom's Name</label>
+                 <label className="body-serif text-antique-gold/40 text-[9px] uppercase tracking-widest">Groom&apos;s Name</label>
                  <input 
                    type="text" 
                    value={state.name2} 
@@ -332,63 +437,62 @@ export function InvitePreview() {
                   </div>
                </div>
 
+               {/* Color Palette — Named Swatches */}
                <div>
                   <label className="body-serif text-antique-gold/40 text-[9px] uppercase tracking-widest mb-6 block">Color Palette</label>
-                  <div className="flex flex-wrap gap-3">
-                    {Object.keys(themes).map((id) => (
-                      <button 
-                        key={id}
-                        onClick={() => setState(p => ({ ...p, theme: id as ThemeID }))}
-                        className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${state.theme === id ? 'border-white scale-110 shadow-lg' : 'border-transparent'}`}
-                        style={{ background: `linear-gradient(135deg, ${themes[id as ThemeID].bg} 50%, ${themes[id as ThemeID].accent} 50%)` }}
-                      />
-                    ))}
+                  <div className="grid grid-cols-2 gap-3">
+                    {(Object.keys(themes) as ThemeID[]).map((id) => {
+                      const t = themes[id];
+                      const isSelected = state.theme === id;
+                      return (
+                        <button 
+                          key={id}
+                          onClick={() => setState(p => ({ ...p, theme: id }))}
+                          className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-300 ${
+                            isSelected 
+                              ? 'border-antique-gold/50 bg-maroon/40 shadow-[0_0_20px_rgba(212,175,55,0.1)]' 
+                              : 'border-antique-gold/10 bg-maroon/10 hover:border-antique-gold/25'
+                          }`}
+                        >
+                          <div 
+                            className={`w-7 h-7 rounded-full shrink-0 border-2 transition-transform ${isSelected ? 'border-white scale-110' : 'border-transparent'}`}
+                            style={{ background: `linear-gradient(135deg, ${t.bg} 50%, ${t.accent} 50%)` }}
+                          />
+                          <span className={`text-[9px] uppercase tracking-wider font-bold ${isSelected ? 'text-antique-gold' : 'text-off-white/30'}`}>
+                            {t.name}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                </div>
             </div>
           </div>
 
-          {/* Media Controls */}
+          {/* Media Controls — Drag & Drop Zones */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-antique-gold/5">
-             <div className="space-y-4">
-                <label className="body-serif text-antique-gold/40 text-[9px] uppercase tracking-widest block">Couple's Portrait</label>
-                <div className="relative group overflow-hidden bg-maroon/20 border border-antique-gold/10 rounded-2xl p-6 h-32 flex flex-col items-center justify-center transition-all hover:border-antique-gold/40">
-                   <input type="file" accept="image/*" onChange={handlePhoto} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
-                   {state.photoUrl ? (
-                     <div className="flex items-center gap-4">
-                        <img src={state.photoUrl} className="w-12 h-12 rounded-full object-cover border border-antique-gold" />
-                        <span className="text-xs text-off-white font-medium">Change Photo</span>
-                     </div>
-                   ) : (
-                     <div className="text-center">
-                        <ImageIcon className="w-6 h-6 text-antique-gold/40 mx-auto mb-2" />
-                        <span className="text-[10px] text-off-white/40 uppercase tracking-widest">Click to Upload</span>
-                     </div>
-                   )}
-                </div>
-                {state.photoUrl && <button onClick={() => setState(p => ({ ...p, photoUrl: null }))} className="text-[9px] text-red-400 uppercase tracking-widest font-bold">Remove Portrait</button>}
-             </div>
-
-             <div className="space-y-4">
-                <label className="body-serif text-antique-gold/40 text-[9px] uppercase tracking-widest block">Cinematic Background</label>
-                <div className="relative group overflow-hidden bg-maroon/20 border border-antique-gold/10 rounded-2xl p-6 h-32 flex flex-col items-center justify-center transition-all hover:border-antique-gold/40">
-                   <input type="file" accept="video/mp4,video/webm" onChange={handleVideo} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
-                   {state.videoUrl ? (
-                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-antique-gold/20 flex items-center justify-center border border-antique-gold">
-                           <Play className="w-5 h-5 text-antique-gold" />
-                        </div>
-                        <span className="text-xs text-off-white font-medium">Change Video</span>
-                     </div>
-                   ) : (
-                     <div className="text-center">
-                        <Camera className="w-6 h-6 text-antique-gold/40 mx-auto mb-2" />
-                        <span className="text-[10px] text-off-white/40 uppercase tracking-widest">Click to Upload</span>
-                     </div>
-                   )}
-                </div>
-                {state.videoUrl && <button onClick={() => setState(p => ({ ...p, videoUrl: null }))} className="text-[9px] text-red-400 uppercase tracking-widest font-bold">Remove Video</button>}
-             </div>
+             <UploadZone
+               label="Couple's Portrait"
+               accept="image/*"
+               value={state.photoUrl}
+               fileName={state.photoName}
+               fileSize={state.photoSize}
+               onFile={handlePhoto}
+               onClear={() => setState(p => ({ ...p, photoUrl: null, photoName: '', photoSize: '' }))}
+               icon={ImageIcon}
+               previewType="image"
+             />
+             <UploadZone
+               label="Cinematic Background"
+               accept="video/mp4,video/webm"
+               value={state.videoUrl}
+               fileName={state.videoName}
+               fileSize={state.videoSize}
+               onFile={handleVideo}
+               onClear={() => setState(p => ({ ...p, videoUrl: null, videoName: '', videoSize: '' }))}
+               icon={Camera}
+               previewType="video"
+             />
           </div>
         </div>
 
